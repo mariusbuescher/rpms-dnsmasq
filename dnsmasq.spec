@@ -1,16 +1,19 @@
 Name:           dnsmasq
 Version:        2.30
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
 License:        GPL
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{name}-%{version}.tar.gz
-Patch0:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-fedora-extras.patch
+Patch0:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-initscript.patch
+Patch1:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-enable-dbus.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+%if "%{dist}" != ".fc3"
 BuildRequires:  dbus-devel
+%endif
 
 Requires(post):	 /sbin/chkconfig
 Requires(post):  /sbin/service
@@ -31,6 +34,9 @@ machines.
 %prep
 %setup -q
 %patch0 -p1
+%if "%{dist}" != ".fc3"
+%patch1 -p1
+%endif
 
 %build
 make %{?_smp_mflags}
@@ -74,10 +80,15 @@ fi
 
 
 %changelog
-* Mon Apr 24 2006 Patrick Laughton <jima@auroralinux.org> 2.30-2
+* Thu Apr 27 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-3
+- Un-enabled HAVE_ISC_READER, a hack to enable a deprecated feature (request)
+- Split initscript & enable-dbus patches, conditionalized dbus for FC3
+- Tweaked name field in changelog entries (trying to be consistent)
+
+* Mon Apr 24 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-2
 - Disabled stripping of binary while installing (oops)
 - Enabled HAVE_ISC_READER/HAVE_DBUS via patch
 - Added BuildReq for dbus-devel
 
-* Mon Apr 24 2006 Patrick Laughton <jima@auroralinux.org> 2.30-1
+* Mon Apr 24 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-1
 - Initial Fedora Extras RPM

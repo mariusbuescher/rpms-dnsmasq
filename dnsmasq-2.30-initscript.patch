@@ -1,0 +1,12 @@
+diff -urN dnsmasq-2.30/rpm/dnsmasq.rh dnsmasq-2.30-patched/rpm/dnsmasq.rh
+--- dnsmasq-2.30/rpm/dnsmasq.rh	2006-04-23 08:26:21.000000000 -0500
++++ dnsmasq-2.30-patched/rpm/dnsmasq.rh	2006-04-24 15:06:01.000000000 -0500
+@@ -2,7 +2,7 @@
+ #
+ # Startup script for the DNS caching server
+ #
+-# chkconfig: 2345 99 01
++# chkconfig: - 99 01
+ # description: This script starts your DNS caching server
+ # processname: dnsmasq
+ # pidfile: /var/run/dnsmasq.pid
