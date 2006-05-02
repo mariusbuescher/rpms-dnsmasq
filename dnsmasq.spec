@@ -1,6 +1,6 @@
 Name:           dnsmasq
 Version:        2.30
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -9,6 +9,7 @@ URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{name}-%{version}.tar.gz
 Patch0:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-initscript.patch
 Patch1:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-enable-dbus.patch
+Patch2:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-dbus-config.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %if "%{dist}" != ".fc3"
@@ -36,6 +37,7 @@ machines.
 %patch0 -p1
 %if "%{dist}" != ".fc3"
 %patch1 -p1
+%patch2 -p1
 %endif
 
 %build
@@ -46,9 +48,13 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 # normally i'd do 'make install'...it's a bit messy, though
 mkdir -p $RPM_BUILD_ROOT%{_sbindir} $RPM_BUILD_ROOT%{_initrddir} \
-	$RPM_BUILD_ROOT%{_mandir}/man8
+	$RPM_BUILD_ROOT%{_mandir}/man8 \
+	$RPM_BUILD_ROOT%{_sysconfdir}/sysconfig \
+	$RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
+install rpm/dnsmasq.sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/dnsmasq
+install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
 install rpm/dnsmasq.rh $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
 install man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
@@ -73,13 +79,20 @@ fi
 %files
 %defattr(-,root,root,-)
 %doc CHANGELOG COPYING FAQ doc.html setup.html UPGRADING_to_2.0
-%config(noreplace) %attr(664,root,root) %{_sysconfdir}/dnsmasq.conf
+%config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
+%config(noreplace) %attr(644,root,root) %{_sysconfdir}/sysconfig/dnsmasq
+%config(noreplace) %attr(644,root,root) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
 %{_initrddir}/dnsmasq
 %{_sbindir}/dnsmasq
 %{_mandir}/man8/dnsmasq*
 
 
 %changelog
+* Tue May  2 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-4
+- Moved options out of init script and into /etc/sysconfig/dnsmasq
+- Disabled DHCP_LEASE in sysconfig file, fixing bug #190379
+- Simon Kelley provided dbus/dnsmasq.conf, soon to be part of the tarball
+
 * Thu Apr 27 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-3
 - Un-enabled HAVE_ISC_READER, a hack to enable a deprecated feature (request)
 - Split initscript & enable-dbus patches, conditionalized dbus for FC3
