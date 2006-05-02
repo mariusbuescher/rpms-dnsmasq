@@ -1,6 +1,6 @@
 Name:           dnsmasq
 Version:        2.30
-Release:        4%{?dist}
+Release:        4.1%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -34,10 +34,10 @@ machines.
 
 %prep
 %setup -q
-%patch0 -p1
+#%patch0 -p1
 %if "%{dist}" != ".fc3"
-%patch1 -p1
-%patch2 -p1
+#%patch1 -p1
+#%patch2 -p1
 %endif
 
 %build
@@ -53,7 +53,6 @@ mkdir -p $RPM_BUILD_ROOT%{_sbindir} $RPM_BUILD_ROOT%{_initrddir} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
-install rpm/dnsmasq.sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/dnsmasq
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
 install rpm/dnsmasq.rh $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
 install man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
@@ -80,7 +79,6 @@ fi
 %defattr(-,root,root,-)
 %doc CHANGELOG COPYING FAQ doc.html setup.html UPGRADING_to_2.0
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
-%config(noreplace) %attr(644,root,root) %{_sysconfdir}/sysconfig/dnsmasq
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
 %{_initrddir}/dnsmasq
 %{_sbindir}/dnsmasq
@@ -88,6 +86,11 @@ fi
 
 
 %changelog
+* Tue May  2 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-4.1
+- More upstream-recommended cleanups :)
+- Killed sysconfig file (provides unneeded functionality)
+- Tweaked init script a little more
+
 * Tue May  2 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-4
 - Moved options out of init script and into /etc/sysconfig/dnsmasq
 - Disabled DHCP_LEASE in sysconfig file, fixing bug #190379
