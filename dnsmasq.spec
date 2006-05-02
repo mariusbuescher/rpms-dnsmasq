@@ -1,6 +1,6 @@
 Name:           dnsmasq
 Version:        2.30
-Release:        4.1%{?dist}
+Release:        4.2%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -34,10 +34,10 @@ machines.
 
 %prep
 %setup -q
-#%patch0 -p1
+%patch0 -p1
 %if "%{dist}" != ".fc3"
-#%patch1 -p1
-#%patch2 -p1
+%patch1 -p1
+%patch2 -p1
 %endif
 
 %build
@@ -86,7 +86,7 @@ fi
 
 
 %changelog
-* Tue May  2 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-4.1
+* Tue May  2 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-4.2
 - More upstream-recommended cleanups :)
 - Killed sysconfig file (provides unneeded functionality)
 - Tweaked init script a little more
