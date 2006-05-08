@@ -1,6 +1,6 @@
 Name:           dnsmasq
-Version:        2.30
-Release:        4.2%{?dist}
+Version:        2.31
+Release:        1%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -9,7 +9,6 @@ URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{name}-%{version}.tar.gz
 Patch0:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-initscript.patch
 Patch1:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-enable-dbus.patch
-Patch2:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-dbus-config.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %if "%{dist}" != ".fc3"
@@ -37,7 +36,6 @@ machines.
 %patch0 -p1
 %if "%{dist}" != ".fc3"
 %patch1 -p1
-%patch2 -p1
 %endif
 
 %build
@@ -53,8 +51,10 @@ mkdir -p $RPM_BUILD_ROOT%{_sbindir} $RPM_BUILD_ROOT%{_initrddir} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
+%if "%{dist}" != ".fc3"
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
-install rpm/dnsmasq.rh $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
+%endif
+install rpm/dnsmasq.init $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
 install man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
 %clean
@@ -77,15 +77,22 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc CHANGELOG COPYING FAQ doc.html setup.html UPGRADING_to_2.0
+%doc CHANGELOG COPYING FAQ doc.html setup.html UPGRADING_to_2.0 dbus/DBus-interface
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
+%if "%{dist}" != ".fc3"
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
+%endif
 %{_initrddir}/dnsmasq
 %{_sbindir}/dnsmasq
 %{_mandir}/man8/dnsmasq*
 
 
 %changelog
+* Mon May  8 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.31-1
+- Removed dbus config patch (now provided upstream)
+- Patched in init script (no longer provided upstream)
+- Added DBus-interface to docs
+
 * Tue May  2 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.30-4.2
 - More upstream-recommended cleanups :)
 - Killed sysconfig file (provides unneeded functionality)
