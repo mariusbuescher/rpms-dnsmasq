@@ -1,5 +1,5 @@
 Name:           dnsmasq
-Version:        2.31
+Version:        2.32
 Release:        1%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
@@ -11,7 +11,7 @@ Patch0:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-i
 Patch1:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-%{version}-enable-dbus.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-%if "%{dist}" != ".fc3"
+%if "%fedora" > "3" || "%aurora" > "2"
 BuildRequires:  dbus-devel
 %endif
 
@@ -34,7 +34,7 @@ machines.
 %prep
 %setup -q
 %patch0 -p1
-%if "%{dist}" != ".fc3"
+%if "%fedora" > "3" || "%aurora" > "2"
 %patch1 -p1
 %endif
 
@@ -51,7 +51,7 @@ mkdir -p $RPM_BUILD_ROOT%{_sbindir} $RPM_BUILD_ROOT%{_initrddir} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
-%if "%{dist}" != ".fc3"
+%if "%fedora" > "3" || "%aurora" > "2"
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
 %endif
 install rpm/dnsmasq.init $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
@@ -79,7 +79,7 @@ fi
 %defattr(-,root,root,-)
 %doc CHANGELOG COPYING FAQ doc.html setup.html UPGRADING_to_2.0 dbus/DBus-interface
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
-%if "%{dist}" != ".fc3"
+%if "%fedora" > "3" || "%aurora" > "2"
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
 %endif
 %{_initrddir}/dnsmasq
@@ -88,6 +88,10 @@ fi
 
 
 %changelog
+* Mon Jun 12 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.32-1
+- Update from upstream
+- Patch from Dennis Gilmore fixed the conditionals to detect Aurora Linux
+
 * Mon May  8 2006 Patrick "Jima" Laughton <jima@auroralinux.org> 2.31-1
 - Removed dbus config patch (now provided upstream)
 - Patched in init script (no longer provided upstream)

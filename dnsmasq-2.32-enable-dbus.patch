@@ -1,7 +1,7 @@
-diff -urN dnsmasq-2.31/src/config.h dnsmasq-2.31-patched/src/config.h
---- dnsmasq-2.31/src/config.h	2006-05-06 06:18:25.000000000 -0500
-+++ dnsmasq-2.31-patched/src/config.h	2006-05-08 07:26:04.000000000 -0500
-@@ -169,7 +169,7 @@
+diff -urN dnsmasq-2.32/src/config.h dnsmasq-2.32-patched/src/config.h
+--- dnsmasq-2.32/src/config.h	2006-06-09 14:52:06.000000000 -0500
++++ dnsmasq-2.32-patched/src/config.h	2006-06-12 09:07:08.000000000 -0500
+@@ -156,7 +156,7 @@
  /* platform independent options- uncomment to enable */
  /* #define HAVE_BROKEN_RTC */
  /* #define HAVE_ISC_READER */
