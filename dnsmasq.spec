@@ -1,6 +1,6 @@
 Name:           dnsmasq
 Version:        2.32
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -88,6 +88,9 @@ fi
 
 
 %changelog
+* Thu Jul 20 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.32-2
+- Forced update due to dbus version bump
+
 * Mon Jun 12 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.32-1
 - Update from upstream
 - Patch from Dennis Gilmore fixed the conditionals to detect Aurora Linux
