@@ -1,6 +1,6 @@
 Name:           dnsmasq
 Version:        2.32
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -14,6 +14,8 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %if "%fedora" > "3" || "%aurora" > "2"
 BuildRequires:  dbus-devel
 %endif
+
+BuildRequires:	pkgconfig
 
 Requires(post):	 /sbin/chkconfig
 Requires(post):  /sbin/service
@@ -88,6 +90,9 @@ fi
 
 
 %changelog
+* Sat Jul 22 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.32-3
+- Added pkgconfig BuildReq due to reduced buildroot
+
 * Thu Jul 20 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.32-2
 - Forced update due to dbus version bump
 
