@@ -1,6 +1,6 @@
-diff -urN dnsmasq-2.32/rpm/dnsmasq.init dnsmasq-2.32-patched/rpm/dnsmasq.init
---- dnsmasq-2.32/rpm/dnsmasq.init	1969-12-31 18:00:00.000000000 -0600
-+++ dnsmasq-2.32-patched/rpm/dnsmasq.init	2006-06-12 09:06:09.000000000 -0500
+diff -urN dnsmasq-2.33/rpm/dnsmasq.init dnsmasq-2.33-patched/rpm/dnsmasq.init
+--- dnsmasq-2.33/rpm/dnsmasq.init	1969-12-31 18:00:00.000000000 -0600
++++ dnsmasq-2.33-patched/rpm/dnsmasq.init	2006-08-15 15:12:17.000000000 -0500
 @@ -0,0 +1,75 @@
 +#!/bin/sh
 +#

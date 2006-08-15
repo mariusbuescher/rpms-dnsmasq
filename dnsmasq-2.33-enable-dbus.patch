@@ -1,6 +1,6 @@
-diff -urN dnsmasq-2.32/src/config.h dnsmasq-2.32-patched/src/config.h
---- dnsmasq-2.32/src/config.h	2006-06-09 14:52:06.000000000 -0500
-+++ dnsmasq-2.32-patched/src/config.h	2006-06-12 09:07:08.000000000 -0500
+diff -urN dnsmasq-2.33/src/config.h dnsmasq-2.33-patched/src/config.h
+--- dnsmasq-2.33/src/config.h	2006-08-04 06:02:36.000000000 -0500
++++ dnsmasq-2.33-patched/src/config.h	2006-08-15 15:14:19.000000000 -0500
 @@ -156,7 +156,7 @@
  /* platform independent options- uncomment to enable */
  /* #define HAVE_BROKEN_RTC */

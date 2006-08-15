@@ -1,6 +1,6 @@
 Name:           dnsmasq
-Version:        2.32
-Release:        3%{?dist}
+Version:        2.33
+Release:        1%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -15,9 +15,9 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  dbus-devel
 %endif
 
-BuildRequires:	pkgconfig
+BuildRequires:  pkgconfig
 
-Requires(post):	 /sbin/chkconfig
+Requires(post):  /sbin/chkconfig
 Requires(post):  /sbin/service
 Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
@@ -48,9 +48,9 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 # normally i'd do 'make install'...it's a bit messy, though
 mkdir -p $RPM_BUILD_ROOT%{_sbindir} $RPM_BUILD_ROOT%{_initrddir} \
-	$RPM_BUILD_ROOT%{_mandir}/man8 \
-	$RPM_BUILD_ROOT%{_sysconfdir}/sysconfig \
-	$RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
+        $RPM_BUILD_ROOT%{_mandir}/man8 \
+        $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig \
+        $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
 %if "%fedora" > "3" || "%aurora" > "2"
@@ -90,6 +90,9 @@ fi
 
 
 %changelog
+* Tue Aug 15 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.33-1
+- Update
+
 * Sat Jul 22 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.32-3
 - Added pkgconfig BuildReq due to reduced buildroot
 
