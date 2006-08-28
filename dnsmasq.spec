@@ -1,6 +1,6 @@
 Name:           dnsmasq
 Version:        2.33
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -90,6 +90,9 @@ fi
 
 
 %changelog
+* Mon Aug 28 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.33-2
+- Rebuild for FC6
+
 * Tue Aug 15 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.33-1
 - Update
 
