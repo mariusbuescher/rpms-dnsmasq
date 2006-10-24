@@ -1,6 +1,6 @@
 Name:           dnsmasq
 Version:        2.34
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -63,17 +63,16 @@ install man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig --add dnsmasq
-
-%preun
-if [ $1 = 0 ]; then     # execute this only if we are NOT doing an upgrade
-    service dnsmasq stop >/dev/null 2>&1
-    /sbin/chkconfig --del dnsmasq
+if [ "$1" = "2" ]; then # if we're being upgraded
+    /sbin/service dnsmasq condrestart >/dev/null 2>&1 || :
+else # if we're being installed
+    /sbin/chkconfig --add dnsmasq
 fi
 
-%postun
-if [ "$1" -ge "1" ]; then
-    service dnsmasq restart >/dev/null 2>&1
+%preun
+if [ "$1" = "0" ]; then     # execute this only if we are NOT doing an upgrade
+    /sbin/service dnsmasq stop >/dev/null 2>&1 || :
+    /sbin/chkconfig --del dnsmasq
 fi
 
 
@@ -90,6 +89,12 @@ fi
 
 
 %changelog
+* Tue Oct 24 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.34-2
+- Fixed BZ#212005
+- Moved %%postun scriptlet to %%post, where it made more sense
+- Render scriptlets safer
+- Minor cleanup for consistency
+
 * Thu Oct 19 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.34-1
 - Hardcoded version in patches, as I'm getting tired of updating them
 - Update to 2.34
