@@ -1,6 +1,6 @@
 Name:           dnsmasq
 Version:        2.35
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -51,7 +51,7 @@ rm -rf $RPM_BUILD_ROOT
 # normally i'd do 'make install'...it's a bit messy, though
 mkdir -p $RPM_BUILD_ROOT%{_sbindir} $RPM_BUILD_ROOT%{_initrddir} \
         $RPM_BUILD_ROOT%{_mandir}/man8 \
-        $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig \
+        $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.d \
         $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
@@ -92,6 +92,10 @@ fi
 
 
 %changelog
+* Mon Nov 06 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.35-2
+- Stop creating /etc/sysconfig on %%install
+- Create /etc/dnsmasq.d on %%install
+
 * Mon Nov 06 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.35-1
 - Update to 2.35
 - Removed UPGRADING_to_2.0 from %%doc as per upstream change
