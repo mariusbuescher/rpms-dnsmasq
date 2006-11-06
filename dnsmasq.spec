@@ -1,6 +1,6 @@
 Name:           dnsmasq
-Version:        2.34
-Release:        2%{?dist}
+Version:        2.35
+Release:        1%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -9,6 +9,7 @@ URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{name}-%{version}.tar.gz
 Patch0:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-2.33-initscript.patch
 Patch1:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-2.33-enable-dbus.patch
+Patch2:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-2.35-conf-dir.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %if "%fedora" > "3" || "%aurora" > "2"
@@ -39,6 +40,7 @@ machines.
 %if "%fedora" > "3" || "%aurora" > "2"
 %patch1 -p1
 %endif
+%patch2 -p1
 
 %build
 make %{?_smp_mflags}
@@ -78,8 +80,9 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc CHANGELOG COPYING FAQ doc.html setup.html UPGRADING_to_2.0 dbus/DBus-interface
+%doc CHANGELOG COPYING FAQ doc.html setup.html dbus/DBus-interface
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
+%dir /etc/dnsmasq.d
 %if "%fedora" > "3" || "%aurora" > "2"
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
 %endif
@@ -89,6 +92,12 @@ fi
 
 
 %changelog
+* Mon Nov 06 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.35-1
+- Update to 2.35
+- Removed UPGRADING_to_2.0 from %%doc as per upstream change
+- Enabled conf-dir in default config as per RFE BZ#214220 (thanks Chris!)
+- Added %%dir /etc/dnsmasq.d to %%files as per above RFE
+
 * Tue Oct 24 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.34-2
 - Fixed BZ#212005
 - Moved %%postun scriptlet to %%post, where it made more sense
