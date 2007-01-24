@@ -1,6 +1,6 @@
 Name:           dnsmasq
-Version:        2.35
-Release:        2%{?dist}
+Version:        2.36
+Release:        1%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -92,6 +92,9 @@ fi
 
 
 %changelog
+* Wed Jan 24 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.36-1
+- New upstream version
+
 * Mon Nov 06 2006 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.35-2
 - Stop creating /etc/sysconfig on %%install
 - Create /etc/dnsmasq.d on %%install
