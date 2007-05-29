@@ -1,5 +1,5 @@
 Name:           dnsmasq
-Version:        2.38
+Version:        2.39
 Release:        1%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
@@ -92,6 +92,9 @@ fi
 
 
 %changelog
+* Tue May 29 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.39-1
+- New upstream version (bugfixes, enhancements)
+
 * Mon Feb 12 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.38-1
 - New upstream version with bugfix for potential hang
 
