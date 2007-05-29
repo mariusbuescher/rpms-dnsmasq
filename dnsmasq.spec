@@ -59,7 +59,7 @@ install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
 %endif
 install rpm/dnsmasq.init $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
-install man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+install -m 644 man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
