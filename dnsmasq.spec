@@ -1,12 +1,14 @@
+%define extraversion rc2
+
 Name:           dnsmasq
-Version:        2.39
-Release:        1%{?dist}
+Version:        2.40
+Release:        0.1.%{extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
-License:        GPL
+License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
-Source0:        http://www.thekelleys.org.uk/dnsmasq/%{name}-%{version}.tar.gz
+Source0:        http://www.thekelleys.org.uk/dnsmasq/%{name}-%{version}%{?extraversion}.tar.gz
 Patch0:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-2.33-initscript.patch
 Patch1:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-2.33-enable-dbus.patch
 Patch2:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-2.35-conf-dir.patch
@@ -35,7 +37,7 @@ machines.
 
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}%{?extraversion}
 %patch0 -p1
 %if "%fedora" > "3" || "%aurora" > "2"
 %patch1 -p1
@@ -92,6 +94,10 @@ fi
 
 
 %changelog
+* Sun Aug 26 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.40-0.1.rc2
+- New upstream release candidate (feature-frozen), thanks Simon!
+- License clarification
+
 * Tue May 29 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.39-1
 - New upstream version (bugfixes, enhancements)
 
