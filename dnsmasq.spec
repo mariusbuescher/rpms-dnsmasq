@@ -1,17 +1,20 @@
-%define extraversion rc2
+#%define extrapath release-candidates/
+#%define extrapath test-releases/
+#%define extraversion rc2
+#%define extraversion test2
 
 Name:           dnsmasq
 Version:        2.40
-Release:        0.1.%{extraversion}%{?dist}
+Release:        1%{extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
-Source0:        http://www.thekelleys.org.uk/dnsmasq/%{name}-%{version}%{?extraversion}.tar.gz
-Patch0:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-2.33-initscript.patch
-Patch1:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-2.33-enable-dbus.patch
-Patch2:         http://beer.tclug.org/fedora-extras/dnsmasq/%{name}-2.35-conf-dir.patch
+Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
+Patch0:         %{name}-2.33-initscript.patch
+Patch1:         %{name}-2.33-enable-dbus.patch
+Patch2:         %{name}-2.35-conf-dir.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %if "%fedora" > "3" || "%aurora" > "2"
@@ -94,6 +97,11 @@ fi
 
 
 %changelog
+* Tue Sep 18 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.40-1
+- Finalized upstream release
+- Removing URLs from patch lines (CVS is the authoritative source)
+- Added more magic to make spinning rc/test packages more seamless
+
 * Sun Aug 26 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.40-0.1.rc2
 - New upstream release candidate (feature-frozen), thanks Simon!
 - License clarification
