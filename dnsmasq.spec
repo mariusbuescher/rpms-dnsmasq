@@ -1,11 +1,17 @@
-#%define extrapath release-candidates/
-#%define extrapath test-releases/
-#%define extraversion rc2
-#%define extraversion test2
+%define testrelease 0
+%define releasecandidate 0
+%if 0%{testrelease}
+  %define extrapath test-releases/
+  %define extraversion test2
+%endif
+%if 0%{releasecandidate}
+  %define extrapath release-candidates/
+  %define extraversion rc2
+%endif
 
 Name:           dnsmasq
 Version:        2.40
-Release:        1%{extraversion}%{?dist}
+Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
