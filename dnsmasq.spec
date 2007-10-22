@@ -1,8 +1,8 @@
-%define testrelease 0
+%define testrelease 1
 %define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
-  %define extraversion test2
+  %define extraversion test11
 %endif
 %if 0%{releasecandidate}
   %define extrapath release-candidates/
@@ -10,8 +10,8 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.40
-Release:        1%{?extraversion}%{?dist}
+Version:        2.41
+Release:        0.1.%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -103,6 +103,9 @@ fi
 
 
 %changelog
+* Mon Oct 22 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.1.test11
+- New upstream test release
+
 * Tue Sep 18 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.40-1
 - Finalized upstream release
 - Removing URLs from patch lines (CVS is the authoritative source)
