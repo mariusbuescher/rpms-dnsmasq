@@ -2,7 +2,7 @@
 %define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
-  %define extraversion test11
+  %define extraversion test20
 %endif
 %if 0%{releasecandidate}
   %define extrapath release-candidates/
@@ -103,6 +103,9 @@ fi
 
 
 %changelog
+* Tue Nov 27 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.1.test20
+- New upstream test release
+
 * Mon Oct 22 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.1.test11
 - New upstream test release
 
