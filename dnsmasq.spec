@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.41
-Release:        0.1.%{?extraversion}%{?dist}
+Release:        0.2.%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,18 +19,15 @@ License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Patch0:         %{name}-2.33-initscript.patch
-Patch1:         %{name}-2.33-enable-dbus.patch
-Patch2:         %{name}-2.35-conf-dir.patch
+Patch1:         %{name}-configuration.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-%if "%fedora" > "3" || "%aurora" > "2"
 BuildRequires:  dbus-devel
-%endif
-
 BuildRequires:  pkgconfig
 
 Requires(post):  /sbin/chkconfig
 Requires(post):  /sbin/service
+Requires(post):  /bin/sed /bin/grep
 Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
 
@@ -48,10 +45,7 @@ machines.
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
 %patch0 -p1
-%if "%fedora" > "3" || "%aurora" > "2"
 %patch1 -p1
-%endif
-%patch2 -p1
 
 %build
 make %{?_smp_mflags}
@@ -62,13 +56,12 @@ rm -rf $RPM_BUILD_ROOT
 # normally i'd do 'make install'...it's a bit messy, though
 mkdir -p $RPM_BUILD_ROOT%{_sbindir} $RPM_BUILD_ROOT%{_initrddir} \
         $RPM_BUILD_ROOT%{_mandir}/man8 \
+        $RPM_BUILD_ROOT%{_var}/lib/dnsmasq \
         $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.d \
         $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
-%if "%fedora" > "3" || "%aurora" > "2"
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
-%endif
 install rpm/dnsmasq.init $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
 install -m 644 man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
@@ -77,6 +70,20 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 if [ "$1" = "2" ]; then # if we're being upgraded
+    # if using the old leases location, move the file to the new one
+    # but only if we're not clobbering another file
+    #
+    if [ -f /var/lib/misc/dnsmasq.leases -a ! -f /var/lib/dnsmasq/dnsmasq.leases ]; then
+        # causes rpmlint to report dangerous-command-in-post,
+        # but that's the price of selinux compliance :-(
+        mv -f /var/lib/misc/dnsmasq.leases /var/lib/dnsmasq/dnsmasq.leases || :
+    fi
+    # ugly, but kind of necessary
+    if [ ! `grep -q dhcp-leasefile=/var/lib/misc/dnsmasq.leases %{_sysconfdir}/dnsmasq.conf` ]; then
+        cp %{_sysconfdir}/dnsmasq.conf %{_sysconfdir}/dnsmasq.conf.tmp || :
+        sed -e 's/var\/lib\/misc/var\/lib\/dnsmasq/' < %{_sysconfdir}/dnsmasq.conf.tmp > %{_sysconfdir}/dnsmasq.conf || :
+        rm -f %{_sysconfdir}/dnsmasq.conf.tmp || :
+    fi
     /sbin/service dnsmasq condrestart >/dev/null 2>&1 || :
 else # if we're being installed
     /sbin/chkconfig --add dnsmasq
@@ -94,20 +101,20 @@ fi
 %doc CHANGELOG COPYING FAQ doc.html setup.html dbus/DBus-interface
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
 %dir /etc/dnsmasq.d
-%if "%fedora" > "3" || "%aurora" > "2"
+%dir %{_var}/lib/dnsmasq
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
-%endif
 %{_initrddir}/dnsmasq
 %{_sbindir}/dnsmasq
 %{_mandir}/man8/dnsmasq*
 
 
 %changelog
-* Tue Nov 27 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.1.test20
+* Tue Dec 04 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.2.test20
 - New upstream test release
-
-* Mon Oct 22 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.1.test11
-- New upstream test release
+- Moving dnsmasq.leases to /var/lib/dnsmasq/ as per BZ#407901
+- Ignoring dangerous-command-in-%%post rpmlint warning (as per above fix)
+- Patch consolidation/cleanup
+- Removed conditionals for Fedora <= 3 and Aurora 2.0
 
 * Tue Sep 18 2007 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.40-1
 - Finalized upstream release
