@@ -1,5 +1,5 @@
 %define testrelease 0
-%define releasecandidate 1
+%define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test30
@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.41
-Release:        0.6.%{?extraversion}%{?dist}
+Release:        0.7%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -109,6 +109,9 @@ fi
 
 
 %changelog
+* Wed Feb 13 2008 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.7
+- New upstream release
+
 * Wed Jan 30 2008 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.6.rc1
 - Release candidate
 - Happy Birthday Isaac!
