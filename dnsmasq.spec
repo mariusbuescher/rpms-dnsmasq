@@ -11,15 +11,16 @@
 
 Name:           dnsmasq
 Version:        2.41
-Release:        0.7%{?extraversion}%{?dist}
+Release:        0.8%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
-License:        GPLv2
+License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Patch0:         %{name}-2.33-initscript.patch
 Patch1:         %{name}-configuration.patch
+Patch2:         %{name}-newglibc.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  dbus-devel
@@ -46,6 +47,7 @@ machines.
 %setup -q -n %{name}-%{version}%{?extraversion}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 make %{?_smp_mflags}
@@ -109,6 +111,9 @@ fi
 
 
 %changelog
+* Wed Feb 13 2008 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.8
+- Added upstream-authored patch for newer glibc (thanks Simon!)
+
 * Wed Feb 13 2008 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.7
 - New upstream release
 
