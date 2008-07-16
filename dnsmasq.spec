@@ -10,8 +10,8 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.41
-Release:        0.8%{?extraversion}%{?dist}
+Version:        2.43
+Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -111,6 +111,9 @@ fi
 
 
 %changelog
+* Wed Jul 16 2008 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.43-1
+- New upstream release, contains fixes for CVE-2008-1447/CERT VU#800113
+
 * Wed Feb 13 2008 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.41-0.8
 - Added upstream-authored patch for newer glibc (thanks Simon!)
 
