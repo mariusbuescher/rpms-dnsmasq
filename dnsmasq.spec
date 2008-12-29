@@ -10,7 +10,7 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.45
+Version:        2.46
 Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
@@ -109,6 +109,9 @@ fi
 
 
 %changelog
+* Mon Dec 29 2008 Matěj Cepl <mcepl@redhat.com> - 2.45-2
+- rebuilt
+
 * Mon Jul 21 2008 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.45-1
 - Upstream release (bugfixes)
 

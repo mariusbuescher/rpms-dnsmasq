@@ -1,19 +1,7 @@
-diff -urN dnsmasq-2.43/contrib/dnslist/dnslist.pl dnsmasq-2.43-patched/contrib/dnslist/dnslist.pl
---- dnsmasq-2.43/contrib/dnslist/dnslist.pl	2008-06-02 13:58:52.000000000 -0500
-+++ dnsmasq-2.43-patched/contrib/dnslist/dnslist.pl	2008-07-16 14:23:16.000000000 -0500
-@@ -44,7 +44,7 @@
- 
- # Location of state file.  (This is the dnsmasq default.)
- # Change with -s <file>
--my $dnsmasq_state_file = '/var/lib/misc/dnsmasq.leases';
-+my $dnsmasq_state_file = '/var/lib/dnsmasq/dnsmasq.leases';
- # Location of template.  (Assumed to be in current directory.)
- # Change with -t <file>
- my $html_template_file = 'dnslist.tt2';
-diff -urN dnsmasq-2.43/dnsmasq.conf.example dnsmasq-2.43-patched/dnsmasq.conf.example
---- dnsmasq-2.43/dnsmasq.conf.example	2008-06-02 13:58:52.000000000 -0500
-+++ dnsmasq-2.43-patched/dnsmasq.conf.example	2008-07-16 14:23:29.000000000 -0500
-@@ -351,7 +351,7 @@
+diff -up dnsmasq-2.46/dnsmasq.conf.example.orig dnsmasq-2.46/dnsmasq.conf.example
+--- dnsmasq-2.46/dnsmasq.conf.example.orig	2008-10-21 15:41:01.000000000 +0200
++++ dnsmasq-2.46/dnsmasq.conf.example	2008-12-29 02:14:18.000000000 +0100
+@@ -365,7 +365,7 @@
  # The DHCP server needs somewhere on disk to keep its lease database.
  # This defaults to a sane location, but if you want to change it, use
  # the line below.
@@ -22,10 +10,10 @@ diff -urN dnsmasq-2.43/dnsmasq.conf.example dnsmasq-2.43-patched/dnsmasq.conf.ex
  
  # Set the DHCP server to authoritative mode. In this mode it will barge in
  # and take over the lease for any client which broadcasts on the network,
-diff -urN dnsmasq-2.43/man/dnsmasq.8 dnsmasq-2.43-patched/man/dnsmasq.8
---- dnsmasq-2.43/man/dnsmasq.8	2008-07-10 10:48:14.000000000 -0500
-+++ dnsmasq-2.43-patched/man/dnsmasq.8	2008-07-16 14:22:35.000000000 -0500
-@@ -1116,7 +1116,7 @@
+diff -up dnsmasq-2.46/man/dnsmasq.8.orig dnsmasq-2.46/man/dnsmasq.8
+--- dnsmasq-2.46/man/dnsmasq.8.orig	2008-10-23 12:23:57.000000000 +0200
++++ dnsmasq-2.46/man/dnsmasq.8	2008-12-29 02:14:18.000000000 +0100
+@@ -1171,7 +1171,7 @@ file needs a 1GHz processor and about 60
  
  .IR /etc/ethers
  
@@ -34,10 +22,10 @@ diff -urN dnsmasq-2.43/man/dnsmasq.8 dnsmasq-2.43-patched/man/dnsmasq.8
  
  .IR /var/db/dnsmasq.leases
  
-diff -urN dnsmasq-2.43/man/es/dnsmasq.8 dnsmasq-2.43-patched/man/es/dnsmasq.8
---- dnsmasq-2.43/man/es/dnsmasq.8	2008-06-02 13:58:52.000000000 -0500
-+++ dnsmasq-2.43-patched/man/es/dnsmasq.8	2008-07-16 14:22:48.000000000 -0500
-@@ -1145,7 +1145,7 @@
+diff -up dnsmasq-2.46/man/es/dnsmasq.8.orig dnsmasq-2.46/man/es/dnsmasq.8
+--- dnsmasq-2.46/man/es/dnsmasq.8.orig	2008-11-03 12:18:56.000000000 +0100
++++ dnsmasq-2.46/man/es/dnsmasq.8	2008-12-29 02:14:18.000000000 +0100
+@@ -1222,7 +1222,7 @@ un CPU de 1GHz y aproximadamente 60MB de
  
  .IR /etc/ethers
  
@@ -46,21 +34,9 @@ diff -urN dnsmasq-2.43/man/es/dnsmasq.8 dnsmasq-2.43-patched/man/es/dnsmasq.8
  
  .IR /var/db/dnsmasq.leases
  
-diff -urN dnsmasq-2.43/man/fr/dnsmasq.8 dnsmasq-2.43-patched/man/fr/dnsmasq.8
---- dnsmasq-2.43/man/fr/dnsmasq.8	2008-07-11 03:28:28.000000000 -0500
-+++ dnsmasq-2.43-patched/man/fr/dnsmasq.8	2008-07-16 14:22:54.000000000 -0500
-@@ -1280,7 +1280,7 @@
- 
- .IR /etc/ethers
- 
--.IR /var/lib/misc/dnsmasq.leases 
-+.IR /var/lib/dnsmasq/dnsmasq.leases 
- 
- .IR /var/db/dnsmasq.leases
- 
-diff -urN dnsmasq-2.43/src/config.h dnsmasq-2.43-patched/src/config.h
---- dnsmasq-2.43/src/config.h	2008-07-11 03:44:17.000000000 -0500
-+++ dnsmasq-2.43-patched/src/config.h	2008-07-16 14:21:02.000000000 -0500
+diff -up dnsmasq-2.46/src/config.h.orig dnsmasq-2.46/src/config.h
+--- dnsmasq-2.46/src/config.h.orig	2008-11-10 22:47:46.000000000 +0100
++++ dnsmasq-2.46/src/config.h	2008-12-29 02:16:05.000000000 +0100
 @@ -43,7 +43,7 @@
  #elif defined(__sun__) || defined (__sun)
  #   define LEASEFILE "/var/cache/dnsmasq.leases"
@@ -70,12 +46,12 @@ diff -urN dnsmasq-2.43/src/config.h dnsmasq-2.43-patched/src/config.h
  #endif
  #if defined(__FreeBSD__)
  #   define CONFFILE "/usr/local/etc/dnsmasq.conf"
-@@ -167,7 +167,7 @@
+@@ -159,7 +159,7 @@ NOTES:
+ /* platform independent options- uncomment to enable */
  #define HAVE_TFTP
  /* #define HAVE_BROKEN_RTC */
- /* #define HAVE_ISC_READER */
 -/* #define HAVE_DBUS */
 +#define HAVE_DBUS
  
- #if defined(HAVE_BROKEN_RTC) && defined(HAVE_ISC_READER)
- #  error HAVE_ISC_READER is not compatible with HAVE_BROKEN_RTC
+ /* Allow TFTP to be disabled with COPTS=-DNO_TFTP */
+ #ifdef NO_TFTP
