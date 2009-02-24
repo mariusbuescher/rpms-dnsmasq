@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.46
-Release:        1%{?extraversion}%{?dist}
+Release:        2%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -109,6 +109,9 @@ fi
 
 
 %changelog
+* Tue Feb 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.46-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Mon Dec 29 2008 Matěj Cepl <mcepl@redhat.com> - 2.45-2
 - rebuilt
 
