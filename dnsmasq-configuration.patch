@@ -1,7 +1,7 @@
-diff -up dnsmasq-2.46/dnsmasq.conf.example.orig dnsmasq-2.46/dnsmasq.conf.example
---- dnsmasq-2.46/dnsmasq.conf.example.orig	2008-10-21 15:41:01.000000000 +0200
-+++ dnsmasq-2.46/dnsmasq.conf.example	2008-12-29 02:14:18.000000000 +0100
-@@ -365,7 +365,7 @@
+diff -urN dnsmasq-2.47/dnsmasq.conf.example.orig dnsmasq-2.47/dnsmasq.conf.example
+--- dnsmasq-2.47/dnsmasq.conf.example.orig	2009-01-03 14:28:51.000000000 -0600
++++ dnsmasq-2.47/dnsmasq.conf.example	2009-05-29 08:34:56.000000000 -0500
+@@ -381,7 +381,7 @@
  # The DHCP server needs somewhere on disk to keep its lease database.
  # This defaults to a sane location, but if you want to change it, use
  # the line below.
@@ -10,10 +10,10 @@ diff -up dnsmasq-2.46/dnsmasq.conf.example.orig dnsmasq-2.46/dnsmasq.conf.exampl
  
  # Set the DHCP server to authoritative mode. In this mode it will barge in
  # and take over the lease for any client which broadcasts on the network,
-diff -up dnsmasq-2.46/man/dnsmasq.8.orig dnsmasq-2.46/man/dnsmasq.8
---- dnsmasq-2.46/man/dnsmasq.8.orig	2008-10-23 12:23:57.000000000 +0200
-+++ dnsmasq-2.46/man/dnsmasq.8	2008-12-29 02:14:18.000000000 +0100
-@@ -1171,7 +1171,7 @@ file needs a 1GHz processor and about 60
+diff -urN dnsmasq-2.47/man/dnsmasq.8.orig dnsmasq-2.47/man/dnsmasq.8
+--- dnsmasq-2.47/man/dnsmasq.8.orig	2009-01-28 04:31:53.000000000 -0600
++++ dnsmasq-2.47/man/dnsmasq.8	2009-05-29 08:34:56.000000000 -0500
+@@ -1189,7 +1189,7 @@
  
  .IR /etc/ethers
  
@@ -22,10 +22,10 @@ diff -up dnsmasq-2.46/man/dnsmasq.8.orig dnsmasq-2.46/man/dnsmasq.8
  
  .IR /var/db/dnsmasq.leases
  
-diff -up dnsmasq-2.46/man/es/dnsmasq.8.orig dnsmasq-2.46/man/es/dnsmasq.8
---- dnsmasq-2.46/man/es/dnsmasq.8.orig	2008-11-03 12:18:56.000000000 +0100
-+++ dnsmasq-2.46/man/es/dnsmasq.8	2008-12-29 02:14:18.000000000 +0100
-@@ -1222,7 +1222,7 @@ un CPU de 1GHz y aproximadamente 60MB de
+diff -urN dnsmasq-2.47/man/es/dnsmasq.8.orig dnsmasq-2.47/man/es/dnsmasq.8
+--- dnsmasq-2.47/man/es/dnsmasq.8.orig	2008-11-17 05:48:33.000000000 -0600
++++ dnsmasq-2.47/man/es/dnsmasq.8	2009-05-29 08:34:56.000000000 -0500
+@@ -1222,7 +1222,7 @@
  
  .IR /etc/ethers
  
@@ -34,19 +34,19 @@ diff -up dnsmasq-2.46/man/es/dnsmasq.8.orig dnsmasq-2.46/man/es/dnsmasq.8
  
  .IR /var/db/dnsmasq.leases
  
-diff -up dnsmasq-2.46/src/config.h.orig dnsmasq-2.46/src/config.h
---- dnsmasq-2.46/src/config.h.orig	2008-11-10 22:47:46.000000000 +0100
-+++ dnsmasq-2.46/src/config.h	2008-12-29 02:16:05.000000000 +0100
-@@ -43,7 +43,7 @@
- #elif defined(__sun__) || defined (__sun)
- #   define LEASEFILE "/var/cache/dnsmasq.leases"
- #else
--#   define LEASEFILE "/var/lib/misc/dnsmasq.leases"
-+#   define LEASEFILE "/var/lib/dnsmasq/dnsmasq.leases"
+diff -urN dnsmasq-2.47/src/config.h.orig dnsmasq-2.47/src/config.h
+--- dnsmasq-2.47/src/config.h.orig	2009-02-05 06:14:24.000000000 -0600
++++ dnsmasq-2.47/src/config.h	2009-05-29 08:34:45.000000000 -0500
+@@ -45,7 +45,7 @@
+ #   elif defined(__sun__) || defined (__sun)
+ #      define LEASEFILE "/var/cache/dnsmasq.leases"
+ #   else
+-#      define LEASEFILE "/var/lib/misc/dnsmasq.leases"
++#      define LEASEFILE "/var/lib/dnsmasq/dnsmasq.leases"
+ #   endif
  #endif
- #if defined(__FreeBSD__)
- #   define CONFFILE "/usr/local/etc/dnsmasq.conf"
-@@ -159,7 +159,7 @@ NOTES:
+ 
+@@ -167,7 +167,7 @@
  /* platform independent options- uncomment to enable */
  #define HAVE_TFTP
  /* #define HAVE_BROKEN_RTC */
