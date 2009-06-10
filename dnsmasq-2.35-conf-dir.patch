@@ -1,9 +1,0 @@
-diff -urN dnsmasq-2.35/dnsmasq.conf.example dnsmasq-2.35-patched/dnsmasq.conf.example
---- dnsmasq-2.35/dnsmasq.conf.example	2006-10-18 15:24:50.000000000 -0500
-+++ dnsmasq-2.35-patched/dnsmasq.conf.example	2006-11-06 11:46:38.000000000 -0600
-@@ -382,4 +382,4 @@
- 
- # Include a another lot of configuration options.
- #conf-file=/etc/dnsmasq.more.conf
--#conf-dir=/etc/dnsmasq.d
-+conf-dir=/etc/dnsmasq.d

@@ -10,7 +10,7 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.47
+Version:        2.48
 Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
@@ -109,6 +109,10 @@ fi
 
 
 %changelog
+* Wed Jun 10 2009 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.48-1
+- Bugfix/feature enhancement update
+- Fixing BZ#494094
+
 * Fri May 29 2009 Patrick "Jima" Laughton <jima@beer.tclug.org> 2.47-1
 - Bugfix/feature enhancement update
 

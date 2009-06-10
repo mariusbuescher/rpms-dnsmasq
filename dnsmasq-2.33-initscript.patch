@@ -6,7 +6,7 @@ diff -urN dnsmasq-2.33/rpm/dnsmasq.init dnsmasq-2.33-patched/rpm/dnsmasq.init
 +#
 +# Startup script for the DNS caching server
 +#
-+# chkconfig: - 99 01
++# chkconfig: - 49 50
 +# description: This script starts your DNS caching server
 +# processname: dnsmasq
 +# pidfile: /var/run/dnsmasq.pid
