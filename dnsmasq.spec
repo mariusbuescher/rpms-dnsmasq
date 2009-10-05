@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.48
-Release:        3%{?extraversion}%{?dist}
+Release:        4%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -20,6 +20,7 @@ URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.lzma
 Patch0:         %{name}-2.33-initscript.patch
 Patch1:         %{name}-configuration.patch
+Patch2:         %{name}-2.48-tftp-server-vulnerabilities.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  dbus-devel
@@ -46,6 +47,7 @@ machines.
 %setup -q -n %{name}-%{version}%{?extraversion}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 make %{?_smp_mflags}
@@ -109,6 +111,9 @@ fi
 
 
 %changelog
+* Mon Oct  5 2009 Mark McLoughlin <markmc@redhat.com> - 2.48-4
+- Fix multiple TFTP server vulnerabilities (CVE-2009-2957, CVE-2009-2958)
+
 * Wed Aug 12 2009 Ville Skyttä <ville.skytta@iki.fi> - 2.48-3
 - Use lzma compressed upstream tarball.
 
