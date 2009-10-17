@@ -11,26 +11,25 @@
 
 Name:           dnsmasq
 Version:        2.48
-Release:        4%{?extraversion}%{?dist}
+Release:        5%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
 License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.lzma
-Patch0:         %{name}-2.33-initscript.patch
-Patch1:         %{name}-configuration.patch
+Source1:        %{name}.init
 Patch2:         %{name}-2.48-tftp-server-vulnerabilities.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
 
-Requires(post):  /sbin/chkconfig
-Requires(post):  /sbin/service
-Requires(post):  /bin/sed /bin/grep
-Requires(preun): /sbin/chkconfig
-Requires(preun): /sbin/service
+Requires(post):  chkconfig
+Requires(preun): chkconfig
+# This is for /sbin/service
+Requires(preun): initscripts
+Requires(post):  initscripts
 
 %description
 Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server. 
@@ -45,8 +44,18 @@ machines.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
-%patch0 -p1
-%patch1 -p1
+
+# use /var/lib/dnsmasq instead of /var/lib/misc
+for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
+    sed -i 's|/var/lib/misc/dnsmasq.leases|/var/lib/dnsmasq/dnsmasq.leases|g' "$file"
+done
+
+#enable dbus
+sed -i 's|/* #define HAVE_DBUS */|#define HAVE_DBUS|g' src/config.h
+
+#enable /etc/dnsmasq.d fix bz 526703
+sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.example
+
 %patch2 -p1
 
 %build
@@ -56,7 +65,7 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 # normally i'd do 'make install'...it's a bit messy, though
-mkdir -p $RPM_BUILD_ROOT%{_sbindir} $RPM_BUILD_ROOT%{_initrddir} \
+mkdir -p $RPM_BUILD_ROOT%{_sbindir} \
         $RPM_BUILD_ROOT%{_mandir}/man8 \
         $RPM_BUILD_ROOT%{_var}/lib/dnsmasq \
         $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.d \
@@ -64,7 +73,7 @@ mkdir -p $RPM_BUILD_ROOT%{_sbindir} $RPM_BUILD_ROOT%{_initrddir} \
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
-install rpm/dnsmasq.init $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
+install -Dp -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
 install -m 644 man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
 %clean
@@ -111,6 +120,12 @@ fi
 
 
 %changelog
+* Sat Oct 17 2009 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.48-5
+- move initscript from patch to a plain text file
+- drop (dnsmasq-configuration.patch) and use sed instead
+- enable /etc/dnsmasq.d fix bz 526703
+- change requires to package name instead of file
+
 * Mon Oct  5 2009 Mark McLoughlin <markmc@redhat.com> - 2.48-4
 - Fix multiple TFTP server vulnerabilities (CVE-2009-2957, CVE-2009-2958)
 
