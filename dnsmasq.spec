@@ -10,8 +10,8 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.48
-Release:        5%{?extraversion}%{?dist}
+Version:        2.51
+Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,7 +19,6 @@ License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.lzma
 Source1:        %{name}.init
-Patch2:         %{name}-2.48-tftp-server-vulnerabilities.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  dbus-devel
@@ -56,7 +55,6 @@ sed -i 's|/* #define HAVE_DBUS */|#define HAVE_DBUS|g' src/config.h
 #enable /etc/dnsmasq.d fix bz 526703
 sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.example
 
-%patch2 -p1
 
 %build
 make %{?_smp_mflags}
@@ -120,11 +118,12 @@ fi
 
 
 %changelog
-* Sat Oct 17 2009 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.48-5
+* Sat Oct 17 2009 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.51-1
 - move initscript from patch to a plain text file
 - drop (dnsmasq-configuration.patch) and use sed instead
 - enable /etc/dnsmasq.d fix bz 526703
 - change requires to package name instead of file
+- new version 2.51
 
 * Mon Oct  5 2009 Mark McLoughlin <markmc@redhat.com> - 2.48-4
 - Fix multiple TFTP server vulnerabilities (CVE-2009-2957, CVE-2009-2958)
