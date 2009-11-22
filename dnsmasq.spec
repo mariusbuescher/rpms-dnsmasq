@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.51
-Release:        1%{?extraversion}%{?dist}
+Release:        2%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -118,6 +118,9 @@ fi
 
 
 %changelog
+* Sun Nov 22 2009 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.51-2
+- fix bz 512664
+
 * Sat Oct 17 2009 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.51-1
 - move initscript from patch to a plain text file
 - drop (dnsmasq-configuration.patch) and use sed instead

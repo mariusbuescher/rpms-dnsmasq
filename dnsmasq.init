@@ -24,6 +24,10 @@ if [ ! -z "${DOMAIN_SUFFIX}" ]; then
   OPTIONS="-s $DOMAIN_SUFFIX"
 fi
 
+pidfile=${PIDFILE-/var/run/dnsmasq.pid}
+lockfile=${LOCKFILE-/var/lock/subsys/dnsmasq}
+
+
 RETVAL=0
 
 # See how we were called.
@@ -33,16 +37,14 @@ case "$1" in
         daemon $dnsmasq $OPTIONS
 	RETVAL=$?
         echo
-        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/dnsmasq
+        [ $RETVAL -eq 0 ] && touch ${lockfile}
         ;;
   stop)
-        if test "x`pidof dnsmasq`" != x; then
-            echo -n "Shutting down dnsmasq: "
-            killproc dnsmasq
-        fi
+        echo -n "Shutting down dnsmasq: "
+        killproc -p ${pidfile} ${dnsmasq}
 	RETVAL=$?
         echo
-        [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/dnsmasq /var/run/dnsmasq.pid
+        [ $RETVAL -eq 0 ] && rm -f ${lockfile} ${pidfile}
         ;;
   status)
 	status dnsmasq
@@ -50,7 +52,7 @@ case "$1" in
 	;;
   reload)
 	echo -n "Reloading dnsmasq: "
-	killproc dnsmasq -HUP
+	killproc -p ${pidfile} ${dnsmasq} -HUP
 	RETVAL=$?
 	echo
 	;;
