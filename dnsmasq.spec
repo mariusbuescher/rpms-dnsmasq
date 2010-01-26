@@ -10,8 +10,8 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.51
-Release:        2%{?extraversion}%{?dist}
+Version:        2.52
+Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -50,7 +50,7 @@ for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
 done
 
 #enable dbus
-sed -i 's|/* #define HAVE_DBUS */|#define HAVE_DBUS|g' src/config.h
+sed -i 's|/\* #define HAVE_DBUS \*/|#define HAVE_DBUS|g' src/config.h
 
 #enable /etc/dnsmasq.d fix bz 526703
 sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.example
@@ -118,6 +118,11 @@ fi
 
 
 %changelog
+* Tue Jan 26 2010 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.52-1
+- New Version 2.52
+- fix condrestart() in initscript bz 547605
+- fix sed to enable DBUS(the '*' need some escaping) bz 553161
+
 * Sun Nov 22 2009 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.51-2
 - fix bz 512664
 

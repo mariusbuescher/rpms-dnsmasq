@@ -62,7 +62,7 @@ case "$1" in
 	RETVAL=$?
 	;;
   condrestart)
-	    if test "x`/sbin/pidof dnsmasq`" != x; then
+	    if test "x`pidfileofproc dnsmasq`" != x; then
 		$0 stop
 		$0 start
 		RETVAL=$?
