@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.52
-Release:        1%{?extraversion}%{?dist}
+Release:        2%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -118,6 +118,9 @@ fi
 
 
 %changelog
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.52-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Tue Jan 26 2010 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.52-1
 - New Version 2.52
 - fix condrestart() in initscript bz 547605
