@@ -11,24 +11,24 @@
 
 Name:           dnsmasq
 Version:        2.52
-Release:        2%{?extraversion}%{?dist}
+Release:        3%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
 License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.lzma
-Source1:        %{name}.init
+Source1:        %{name}.service
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
 
-Requires(post):  chkconfig
-Requires(preun): chkconfig
-# This is for /sbin/service
-Requires(preun): initscripts
-Requires(post):  initscripts
+BuildRequires:  systemd-units
+Requires(post): systemd-units systemd-sysv chkconfig 
+Requires(preun): systemd-units
+Requires(postun): systemd-units 
+
 
 %description
 Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server. 
@@ -71,39 +71,39 @@ mkdir -p $RPM_BUILD_ROOT%{_sbindir} \
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
-install -Dp -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/dnsmasq
 install -m 644 man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+
+# Systemd 
+mkdir -p %{buildroot}%{_unitdir}
+install -m644 %{SOURCE1} %{buildroot}%{_unitdir}
+rm -rf %{buildroot}%{_initrddir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
-if [ "$1" = "2" ]; then # if we're being upgraded
-    # if using the old leases location, move the file to the new one
-    # but only if we're not clobbering another file
-    #
-    if [ -f /var/lib/misc/dnsmasq.leases -a ! -f /var/lib/dnsmasq/dnsmasq.leases ]; then
-        # causes rpmlint to report dangerous-command-in-post,
-        # but that's the price of selinux compliance :-(
-        mv -f /var/lib/misc/dnsmasq.leases /var/lib/dnsmasq/dnsmasq.leases || :
-    fi
-    # ugly, but kind of necessary
-    if [ ! `grep -q dhcp-leasefile=/var/lib/misc/dnsmasq.leases %{_sysconfdir}/dnsmasq.conf` ]; then
-        cp %{_sysconfdir}/dnsmasq.conf %{_sysconfdir}/dnsmasq.conf.tmp || :
-        sed -e 's/var\/lib\/misc/var\/lib\/dnsmasq/' < %{_sysconfdir}/dnsmasq.conf.tmp > %{_sysconfdir}/dnsmasq.conf || :
-        rm -f %{_sysconfdir}/dnsmasq.conf.tmp || :
-    fi
-    /sbin/service dnsmasq condrestart >/dev/null 2>&1 || :
-else # if we're being installed
-    /sbin/chkconfig --add dnsmasq
+if [ $1 -eq 1 ] ; then
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
 
 %preun
-if [ "$1" = "0" ]; then     # execute this only if we are NOT doing an upgrade
-    /sbin/service dnsmasq stop >/dev/null 2>&1 || :
-    /sbin/chkconfig --del dnsmasq
+if [ $1 -eq 0 ]; then
+  /bin/systemctl --no-reload dnsmasq.service > /dev/null 2>&1 || :
+  /bin/systemctl stop dnsmasq.service > /dev/null 2>&1 || :
 fi
 
+
+%postun 
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    /bin/systemctl try-restart dnsmasq.service >/dev/null 2>&1 || :
+fi
+
+%triggerun -- dnsmasq < 2.52-3
+%{_bindir}/systemd-sysv-convert --save dnsmasq >/dev/null 2>&1 ||:
+/bin/systemctl enable dnsmasq.service >/dev/null 2>&1
+/sbin/chkconfig --del dnsmasq >/dev/null 2>&1 || :
+/bin/systemctl try-restart dnsmasq.service >/dev/null 2>&1 || :
 
 %files
 %defattr(-,root,root,-)
@@ -112,12 +112,18 @@ fi
 %dir /etc/dnsmasq.d
 %dir %{_var}/lib/dnsmasq
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
-%{_initrddir}/dnsmasq
+%{_unitdir}/%{name}.service
 %{_sbindir}/dnsmasq
 %{_mandir}/man8/dnsmasq*
 
 
 %changelog
+* Mon Aug 08 2011 Patrick "Jima" Laughton <jima@fedoraproject.org> - 2.52-3
+- Applied Jóhann's patch, minor cleanup
+
+* Thu Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.52-3
+- Introduce systemd unit file, drop SysV support
+
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.52-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
