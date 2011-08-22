@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.52
-Release:        4%{?extraversion}%{?dist}
+Release:        5%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -118,7 +118,7 @@ fi
 
 
 %changelog
-* Mon Aug 08 2011 Patrick "Jima" Laughton <jima@fedoraproject.org> - 2.52-4
+* Mon Aug 08 2011 Patrick "Jima" Laughton <jima@fedoraproject.org> - 2.52-5
 - Include systemd unit file
 
 * Mon Aug 08 2011 Patrick "Jima" Laughton <jima@fedoraproject.org> - 2.52-3
