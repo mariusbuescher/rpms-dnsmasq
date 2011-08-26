@@ -10,8 +10,8 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.52
-Release:        5%{?extraversion}%{?dist}
+Version:        2.58
+Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -118,6 +118,10 @@ fi
 
 
 %changelog
+* Fri Aug 26 2011 Douglas Schilling Landgraf <dougsland@redhat.com> - 2.58-1
+- Fixed License
+- New version 2.58
+
 * Mon Aug 08 2011 Patrick "Jima" Laughton <jima@fedoraproject.org> - 2.52-5
 - Include systemd unit file
 
