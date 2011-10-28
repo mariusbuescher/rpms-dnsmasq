@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.59
-Release:        1%{?extraversion}%{?dist}
+Release:        2%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -101,7 +101,6 @@ fi
 
 %triggerun -- dnsmasq < 2.52-3
 %{_bindir}/systemd-sysv-convert --save dnsmasq >/dev/null 2>&1 ||:
-/bin/systemctl enable dnsmasq.service >/dev/null 2>&1
 /sbin/chkconfig --del dnsmasq >/dev/null 2>&1 || :
 /bin/systemctl try-restart dnsmasq.service >/dev/null 2>&1 || :
 
@@ -118,6 +117,9 @@ fi
 
 
 %changelog
+* Fri Aug 26 2011 Douglas Schilling Landgraf <dougsland@redhat.com> - 2.59-2
+- do not enable service by default
+
 * Fri Aug 26 2011 Douglas Schilling Landgraf <dougsland@redhat.com> - 2.59-1
 - New version 2.59
 - Fix regression in 2.58 (IPv6 issue) - bz 744814
