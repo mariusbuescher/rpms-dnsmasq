@@ -10,7 +10,7 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.58
+Version:        2.59
 Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
@@ -118,6 +118,10 @@ fi
 
 
 %changelog
+* Fri Aug 26 2011 Douglas Schilling Landgraf <dougsland@redhat.com> - 2.59-1
+- New version 2.59
+- Fix regression in 2.58 (IPv6 issue) - bz 744814
+
 * Fri Aug 26 2011 Douglas Schilling Landgraf <dougsland@redhat.com> - 2.58-1
 - Fixed License
 - New version 2.58
