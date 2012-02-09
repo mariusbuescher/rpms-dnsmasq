@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.59
-Release:        3%{?extraversion}%{?dist}
+Release:        4%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -40,6 +40,14 @@ either in each host or in a central configuration file. Dnsmasq supports
 static and dynamic DHCP leases and BOOTP for network booting of diskless
 machines.
 
+%package        utils
+Summary:        Utilities for manipulating DHCP server leases
+Group:          System Environment/Daemons
+
+%description    utils
+Utilities that use the standard DHCP protocol to
+query/remove a DHCP server's leases.
+
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
@@ -58,6 +66,7 @@ sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.examp
 
 %build
 make %{?_smp_mflags}
+make -C contrib/wrt %{?_smp_mflags}
 
 
 %install
@@ -72,6 +81,14 @@ install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
 install -m 644 man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+
+# utils sub package
+mkdir -p $RPM_BUILD_ROOT%{_bindir} \
+         $RPM_BUILD_ROOT%{_mandir}/man1
+install -m 755 contrib/wrt/dhcp_release $RPM_BUILD_ROOT%{_bindir}/dhcp_release
+install -m 644 contrib/wrt/dhcp_release.1 $RPM_BUILD_ROOT%{_mandir}/man1/dhcp_release.1
+install -m 755 contrib/wrt/dhcp_lease_time $RPM_BUILD_ROOT%{_bindir}/dhcp_lease_time
+install -m 644 contrib/wrt/dhcp_lease_time.1 $RPM_BUILD_ROOT%{_mandir}/man1/dhcp_lease_time.1
 
 # Systemd
 mkdir -p %{buildroot}%{_unitdir}
@@ -115,8 +132,14 @@ fi
 %{_sbindir}/dnsmasq
 %{_mandir}/man8/dnsmasq*
 
+%files utils
+%{_bindir}/dhcp_*
+%{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Feb  9 2012 Pádraig Brady <P@draigBrady.com> - 2.59-4
+- Include DHCP lease management utils in a subpackage
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.59-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
