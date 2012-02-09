@@ -25,19 +25,19 @@ BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
 
 BuildRequires:  systemd-units
-Requires(post): systemd-units systemd-sysv chkconfig 
+Requires(post): systemd-units systemd-sysv chkconfig
 Requires(preun): systemd-units
-Requires(postun): systemd-units 
+Requires(postun): systemd-units
 
 
 %description
-Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server. 
-It is designed to provide DNS and, optionally, DHCP, to a small network. 
-It can serve the names of local machines which are not in the global 
-DNS. The DHCP server integrates with the DNS server and allows machines 
-with DHCP-allocated addresses to appear in the DNS with names configured 
-either in each host or in a central configuration file. Dnsmasq supports 
-static and dynamic DHCP leases and BOOTP for network booting of diskless 
+Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server.
+It is designed to provide DNS and, optionally, DHCP, to a small network.
+It can serve the names of local machines which are not in the global
+DNS. The DHCP server integrates with the DNS server and allows machines
+with DHCP-allocated addresses to appear in the DNS with names configured
+either in each host or in a central configuration file. Dnsmasq supports
+static and dynamic DHCP leases and BOOTP for network booting of diskless
 machines.
 
 
@@ -73,7 +73,7 @@ install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
 install -m 644 man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
 
-# Systemd 
+# Systemd
 mkdir -p %{buildroot}%{_unitdir}
 install -m644 %{SOURCE1} %{buildroot}%{_unitdir}
 rm -rf %{buildroot}%{_initrddir}
@@ -93,7 +93,7 @@ if [ $1 -eq 0 ]; then
 fi
 
 
-%postun 
+%postun
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 if [ $1 -ge 1 ] ; then
     /bin/systemctl try-restart dnsmasq.service >/dev/null 2>&1 || :
