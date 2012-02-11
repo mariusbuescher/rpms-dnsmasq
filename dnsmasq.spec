@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.59
-Release:        4%{?extraversion}%{?dist}
+Release:        5%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -65,8 +65,10 @@ sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.examp
 
 
 %build
+# Note the main Makefile handles RPM_OPT_FLAGS internally,
+# while we need to explicitly set it for the contrib Makefile
 make %{?_smp_mflags}
-make -C contrib/wrt %{?_smp_mflags}
+CFLAGS="$RPM_OPT_FLAGS" make -C contrib/wrt %{?_smp_mflags}
 
 
 %install
@@ -137,6 +139,9 @@ fi
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Sat Feb 11 2012 Pádraig Brady <P@draigBrady.com> - 2.59-5
+- Compile DHCP lease management utils with RPM_OPT_FLAGS
+
 * Thu Feb  9 2012 Pádraig Brady <P@draigBrady.com> - 2.59-4
 - Include DHCP lease management utils in a subpackage
 
