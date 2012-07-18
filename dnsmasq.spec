@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.59
-Release:        5%{?extraversion}%{?dist}
+Release:        6%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -139,6 +139,9 @@ fi
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.59-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Sat Feb 11 2012 Pádraig Brady <P@draigBrady.com> - 2.59-5
 - Compile DHCP lease management utils with RPM_OPT_FLAGS
 
