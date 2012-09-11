@@ -10,14 +10,14 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.59
-Release:        6%{?extraversion}%{?dist}
+Version:        2.63
+Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
-Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.lzma
+Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -139,8 +139,9 @@ fi
 %{_mandir}/man1/dhcp_*
 
 %changelog
-* Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.59-6
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+* Sat Aug 23 2012 Douglas Schilling Landgraf <dougsland@redhat.com> - 2.63-1
+- Use .tar.gz compression, in upstream site there is no .lzma anymore
+- New version 2.63
 
 * Sat Feb 11 2012 Pádraig Brady <P@draigBrady.com> - 2.59-5
 - Compile DHCP lease management utils with RPM_OPT_FLAGS
