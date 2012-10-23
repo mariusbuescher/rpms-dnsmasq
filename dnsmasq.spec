@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.63
-Release:        1%{?extraversion}%{?dist}
+Release:        2%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -24,10 +24,10 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
 
-BuildRequires:  systemd-units
-Requires(post): systemd-units systemd-sysv chkconfig
-Requires(preun): systemd-units
-Requires(postun): systemd-units
+BuildRequires:  systemd
+Requires(post): systemd systemd-sysv chkconfig
+Requires(preun): systemd
+Requires(postun): systemd
 
 
 %description
@@ -101,22 +101,13 @@ rm -rf %{buildroot}%{_initrddir}
 rm -rf $RPM_BUILD_ROOT
 
 %post
-if [ $1 -eq 1 ] ; then
-    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
-fi
+%systemd_post dnsmasq.service
 
 %preun
-if [ $1 -eq 0 ]; then
-  /bin/systemctl --no-reload dnsmasq.service > /dev/null 2>&1 || :
-  /bin/systemctl stop dnsmasq.service > /dev/null 2>&1 || :
-fi
-
+%systemd_preun dnsmasq.service
 
 %postun
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ] ; then
-    /bin/systemctl try-restart dnsmasq.service >/dev/null 2>&1 || :
-fi
+%systemd_postun_with_restart dnsmasq.service
 
 %triggerun -- dnsmasq < 2.52-3
 %{_bindir}/systemd-sysv-convert --save dnsmasq >/dev/null 2>&1 ||:
@@ -139,6 +130,9 @@ fi
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Oct 23 2012 Tomas Hozza <thozza@redhat.com> - 2.63-2
+- Introduce new systemd-rpm macros in dnsmasq spec file (#850096)
+
 * Sat Aug 23 2012 Douglas Schilling Landgraf <dougsland@redhat.com> - 2.63-1
 - Use .tar.gz compression, in upstream site there is no .lzma anymore
 - New version 2.63
