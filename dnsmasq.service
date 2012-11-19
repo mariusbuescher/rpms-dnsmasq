@@ -6,7 +6,7 @@ After=syslog.target network.target
 Type=forking
 PIDFile=/var/run/dnsmasq.pid
 EnvironmentFile=-/etc/sysconfig/network
-ExecStart=/usr/sbin/dnsmasq -s $HOSTNAME
+ExecStart=/usr/sbin/dnsmasq
 
 [Install]
 WantedBy=multi-user.target

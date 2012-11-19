@@ -139,6 +139,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Nov 19 2012 Tomas Hozza <thozza@redhat.com> - 2.63-3
 - dhcp6 support fixes (#867054)
+- removed "-s $HOSTNAME" from .service file (#753656, #822797)
 
 * Tue Oct 23 2012 Tomas Hozza <thozza@redhat.com> - 2.63-2
 - Introduce new systemd-rpm macros in dnsmasq spec file (#850096)
