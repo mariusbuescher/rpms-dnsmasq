@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.63
-Release:        2%{?extraversion}%{?dist}
+Release:        3%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,6 +19,10 @@ License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
+
+Patch0:     dnsmasq-2.63-ip6-reuseaddr.patch
+Patch1:     dnsmasq-2.63-dhcp6-access-control.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  dbus-devel
@@ -51,6 +55,9 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
+
+%patch0 -p1 -b .ip6_reuseaddr
+%patch1 -p1 -b .dhcp6_access_ctrl
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -130,6 +137,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Nov 19 2012 Tomas Hozza <thozza@redhat.com> - 2.63-3
+- dhcp6 support fixes (#867054)
+
 * Tue Oct 23 2012 Tomas Hozza <thozza@redhat.com> - 2.63-2
 - Introduce new systemd-rpm macros in dnsmasq spec file (#850096)
 
