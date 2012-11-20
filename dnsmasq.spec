@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.63
-Release:        3%{?extraversion}%{?dist}
+Release:        4%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -137,6 +137,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Nov 20 2012 Tomas Hozza <thozza@redhat.com> - 2.63-4
+- Remove EnvironmentFile from service file (#878343)
+
 * Mon Nov 19 2012 Tomas Hozza <thozza@redhat.com> - 2.63-3
 - dhcp6 support fixes (#867054)
 - removed "-s $HOSTNAME" from .service file (#753656, #822797)
