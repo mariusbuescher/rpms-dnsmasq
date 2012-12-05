@@ -10,8 +10,8 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.63
-Release:        4%{?extraversion}%{?dist}
+Version:        2.64
+Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,9 +19,6 @@ License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
-
-Patch0:     dnsmasq-2.63-ip6-reuseaddr.patch
-Patch1:     dnsmasq-2.63-dhcp6-access-control.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -55,9 +52,6 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
-
-%patch0 -p1 -b .ip6_reuseaddr
-%patch1 -p1 -b .dhcp6_access_ctrl
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -137,6 +131,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Dec 05 2012 Tomas Hozza <thozza@redhat.com> - 2.64-1
+- New version 2.64
+- Merged patches dropped
+
 * Tue Nov 20 2012 Tomas Hozza <thozza@redhat.com> - 2.63-4
 - Remove EnvironmentFile from service file (#878343)
 
