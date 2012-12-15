@@ -10,7 +10,7 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.64
+Version:        2.65
 Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
@@ -131,6 +131,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Sat Dec 15 2012 Tomas Hozza <thozza@redhat.com> - 2.65-1
+- new version 2.65
+
 * Wed Dec 05 2012 Tomas Hozza <thozza@redhat.com> - 2.64-1
 - New version 2.64
 - Merged patches dropped
