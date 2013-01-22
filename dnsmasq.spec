@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.65
-Release:        1%{?extraversion}%{?dist}
+Release:        2%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,6 +19,9 @@ License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
+
+# http://www.thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=22ce550e5346947a12a781ed0959a7b1165d0dc6
+Patch0:         %{name}-2.65-Correct-behaviour-for-TCP-queries-to-allowed-address.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -52,6 +55,8 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
+
+%patch0 -p1 -b .CVE-2013-0198
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -131,6 +136,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Jan 22 2013 Tomas Hozza <thozza@redhat.com> - 2.65-2
+- Fix for CVE-2013-0198 (checking of TCP connection interfaces) (#901555)
+
 * Sat Dec 15 2012 Tomas Hozza <thozza@redhat.com> - 2.65-1
 - new version 2.65
 
