@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.65
-Release:        2%{?extraversion}%{?dist}
+Release:        3%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -71,10 +71,8 @@ sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.examp
 
 
 %build
-# Note the main Makefile handles RPM_OPT_FLAGS internally,
-# while we need to explicitly set it for the contrib Makefile
-make %{?_smp_mflags}
-CFLAGS="$RPM_OPT_FLAGS" make -C contrib/wrt %{?_smp_mflags}
+make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
+make -C contrib/wrt %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
 
 
 %install
@@ -136,6 +134,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Jan 24 2013 Tomas Hozza <thozza@redhat.com> - 2.65-3
+- build dnsmasq with $RPM_OPT_FLAGS, $RPM_LD_FLAGS explicitly (#903362) 
+
 * Tue Jan 22 2013 Tomas Hozza <thozza@redhat.com> - 2.65-2
 - Fix for CVE-2013-0198 (checking of TCP connection interfaces) (#901555)
 
