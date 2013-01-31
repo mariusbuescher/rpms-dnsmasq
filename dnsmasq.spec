@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.65
-Release:        3%{?extraversion}%{?dist}
+Release:        4%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -22,6 +22,8 @@ Source1:        %{name}.service
 
 # http://www.thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=22ce550e5346947a12a781ed0959a7b1165d0dc6
 Patch0:         %{name}-2.65-Correct-behaviour-for-TCP-queries-to-allowed-address.patch
+# http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=e25db1f273920d58c5d2e7569cd087e5bd73dd73
+Patch1:         %{name}-2.65-Handle-wrong-interface-for-locally-routed-packets.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -57,6 +59,7 @@ query/remove a DHCP server's leases.
 %setup -q -n %{name}-%{version}%{?extraversion}
 
 %patch0 -p1 -b .CVE-2013-0198
+%patch1 -p1 -b .local_queries
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -134,6 +137,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Jan 31 2013 Tomas Hozza <thozza@redhat.com> - 2.65-4
+- Handle locally-routed DNS Queries (#904940)
+
 * Thu Jan 24 2013 Tomas Hozza <thozza@redhat.com> - 2.65-3
 - build dnsmasq with $RPM_OPT_FLAGS, $RPM_LD_FLAGS explicitly (#903362) 
 
