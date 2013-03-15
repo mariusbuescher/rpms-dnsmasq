@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.65
-Release:        4%{?extraversion}%{?dist}
+Release:        5%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -24,6 +24,9 @@ Source1:        %{name}.service
 Patch0:         %{name}-2.65-Correct-behaviour-for-TCP-queries-to-allowed-address.patch
 # http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=e25db1f273920d58c5d2e7569cd087e5bd73dd73
 Patch1:         %{name}-2.65-Handle-wrong-interface-for-locally-routed-packets.patch
+# Code has been completely rewritten in new version
+# http://lists.thekelleys.org.uk/pipermail/dnsmasq-discuss/2013q1/006967.html
+Patch2:         %{name}-2.65-Allocate-dhcp_buff-ers-also-if-deamon-ra_contexts.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -60,6 +63,7 @@ query/remove a DHCP server's leases.
 
 %patch0 -p1 -b .CVE-2013-0198
 %patch1 -p1 -b .local_queries
+%patch2 -p2 -b .SIGSEGV
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -137,6 +141,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Mar 15 2013 Tomas Hozza <thozza@redhat.com> - 2.65-5
+- Allocate dhcp_buff-ers also if daemon->ra_contexts to prevent SIGSEGV (#920300)
+
 * Thu Jan 31 2013 Tomas Hozza <thozza@redhat.com> - 2.65-4
 - Handle locally-routed DNS Queries (#904940)
 
