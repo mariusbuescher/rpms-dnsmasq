@@ -1,5 +1,5 @@
 %define testrelease 0
-%define releasecandidate 0
+%define releasecandidate 1
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test30
@@ -10,8 +10,8 @@
 %endif
 
 Name:           dnsmasq
-Version:        2.65
-Release:        5%{?extraversion}%{?dist}
+Version:        2.66
+Release:        1%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,14 +19,6 @@ License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
-
-# http://www.thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=22ce550e5346947a12a781ed0959a7b1165d0dc6
-Patch0:         %{name}-2.65-Correct-behaviour-for-TCP-queries-to-allowed-address.patch
-# http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=e25db1f273920d58c5d2e7569cd087e5bd73dd73
-Patch1:         %{name}-2.65-Handle-wrong-interface-for-locally-routed-packets.patch
-# Code has been completely rewritten in new version
-# http://lists.thekelleys.org.uk/pipermail/dnsmasq-discuss/2013q1/006967.html
-Patch2:         %{name}-2.65-Allocate-dhcp_buff-ers-also-if-deamon-ra_contexts.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -60,10 +52,6 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
-
-%patch0 -p1 -b .CVE-2013-0198
-%patch1 -p1 -b .local_queries
-%patch2 -p2 -b .SIGSEGV
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -141,6 +129,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Mar 22 2013 Tomas Hozza <thozza@redhat.com> - 2.66-1.rc1
+- Update to latest dnsmasq-2.66rc1
+- Dropping unneeded patches
+
 * Fri Mar 15 2013 Tomas Hozza <thozza@redhat.com> - 2.65-5
 - Allocate dhcp_buff-ers also if daemon->ra_contexts to prevent SIGSEGV (#920300)
 
