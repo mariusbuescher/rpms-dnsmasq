@@ -24,6 +24,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
+BuildRequires:  libidn-devel
 
 BuildRequires:  systemd
 Requires(post): systemd systemd-sysv chkconfig
@@ -60,6 +61,9 @@ done
 
 #enable dbus
 sed -i 's|/\* #define HAVE_DBUS \*/|#define HAVE_DBUS|g' src/config.h
+
+#enable IDN support
+sed -i 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' src/config.h
 
 #enable /etc/dnsmasq.d fix bz 526703
 sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.example
@@ -132,6 +136,7 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Mar 22 2013 Tomas Hozza <thozza@redhat.com> - 2.66-1.rc1
 - Update to latest dnsmasq-2.66rc1
 - Dropping unneeded patches
+- Enable IDN support
 
 * Fri Mar 15 2013 Tomas Hozza <thozza@redhat.com> - 2.65-5
 - Allocate dhcp_buff-ers also if daemon->ra_contexts to prevent SIGSEGV (#920300)
