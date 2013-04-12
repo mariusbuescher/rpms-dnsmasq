@@ -1,0 +1,61 @@
+From 0b0a73c1c91bef3c2ab60a9563eac69a6b692a25 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Thu, 11 Apr 2013 14:07:02 +0100
+Subject: [PATCH] Fix crash on exceeding DHCP lease limit.
+
+---
+ CHANGELOG   |  4 ++++
+ src/lease.c | 15 +++++++++++----
+ 2 files changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 212d412..b21f10a 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -58,6 +58,10 @@ version 2.66
+ 	    Felker for the bug report.
+ 
+ 	    Update Polish translation. Thanks to Jan Psota.
++
++	    Fix crash if the configured DHCP lease limit is
++	    reached. Regression occurred in 2.61. Thanks to Tsachi for
++	    the bug report. 
+ 	    
+   
+ version 2.65
+diff --git a/src/lease.c b/src/lease.c
+index d30ae80..a4560ba 100644
+--- a/src/lease.c
++++ b/src/lease.c
+@@ -703,8 +703,11 @@ static struct dhcp_lease *lease_allocate(void)
+ struct dhcp_lease *lease4_allocate(struct in_addr addr)
+ {
+   struct dhcp_lease *lease = lease_allocate();
+-  lease->addr = addr;
+-  lease->hwaddr_len = 256; /* illegal value */
++  if (lease)
++    {
++      lease->addr = addr;
++      lease->hwaddr_len = 256; /* illegal value */
++    }
+ 
+   return lease;
+ }
+@@ -713,8 +716,12 @@ struct dhcp_lease *lease4_allocate(struct in_addr addr)
+ struct dhcp_lease *lease6_allocate(struct in6_addr *addrp, int lease_type)
+ {
+   struct dhcp_lease *lease = lease_allocate();
+-  memcpy(lease->hwaddr, addrp, sizeof(*addrp)) ;
+-  lease->flags |= lease_type;
++
++  if (lease)
++    {
++      memcpy(lease->hwaddr, addrp, sizeof(*addrp)) ;
++      lease->flags |= lease_type;
++    }
+ 
+   return lease;
+ }
+-- 
+1.8.1.4
+
