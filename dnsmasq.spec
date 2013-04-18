@@ -1,5 +1,5 @@
 %define testrelease 0
-%define releasecandidate 1
+%define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test30
@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.66
-Release:        1.%{?extraversion}%{?dist}
+Release:        2%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,9 +19,6 @@ License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
-
-# Upstream fix after dnsmasq-2.66rc5 - commit 56a1142f033234e3ee3b6361e9a1bcdbe606f816
-Patch0:         dnsmasq-2.66.rc5-Fix-crash-on-exceeding-DHCP-lease-limit.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -56,8 +53,6 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
-
-%patch0 -p1 -b .lease-limit
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -138,6 +133,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Apr 18 2013 Tomas Hozza <thozza@redhat.com> - 2.66-2
+- New stable version dnsmasq-2.66
+- Drop of merged patch
+
 * Fri Apr 12 2013 Tomas Hozza <thozza@redhat.com> - 2.66-1.rc5
 - Update to latest dnsmasq-2.66rc5
 - Include fix for segfault when lease limit is reached
