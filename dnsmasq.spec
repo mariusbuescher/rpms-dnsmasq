@@ -79,6 +79,10 @@ sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.examp
 
 
 %build
+# We need to compile the daemon with PIE
+RPM_LD_FLAGS="-Wl,-z,relro -pie"
+RPM_OPT_FLAGS="$RPM_OPT_FLAGS -fPIE -DPIE -fPIC"
+
 make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
 make -C contrib/wrt %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
 
@@ -143,6 +147,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Apr 19 2013 Tomas Hozza <thozza@redhat.com> - 2.66-3
+- compile the daemon with PIE
 - include two fixes from upstream git repo
 
 * Thu Apr 18 2013 Tomas Hozza <thozza@redhat.com> - 2.66-2
