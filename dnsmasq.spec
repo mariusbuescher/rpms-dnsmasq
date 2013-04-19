@@ -175,7 +175,7 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Oct 23 2012 Tomas Hozza <thozza@redhat.com> - 2.63-2
 - Introduce new systemd-rpm macros in dnsmasq spec file (#850096)
 
-* Sat Aug 23 2012 Douglas Schilling Landgraf <dougsland@redhat.com> - 2.63-1
+* Thu Aug 23 2012 Douglas Schilling Landgraf <dougsland@redhat.com> - 2.63-1
 - Use .tar.gz compression, in upstream site there is no .lzma anymore
 - New version 2.63
 
@@ -205,7 +205,7 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Aug 08 2011 Patrick "Jima" Laughton <jima@fedoraproject.org> - 2.52-3
 - Applied Jóhann's patch, minor cleanup
 
-* Thu Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.52-3
+* Tue Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.52-3
 - Introduce systemd unit file, drop SysV support
 
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.52-2
