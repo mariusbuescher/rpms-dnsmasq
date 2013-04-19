@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.66
-Release:        2%{?extraversion}%{?dist}
+Release:        3%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,6 +19,12 @@ License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
+
+#include upstream bug fix patches committed after stable release
+# commit 4582c0efe7d7af93517b1f3bcc7af67685ab3e5c
+Patch0:         %{name}-2.66-Fix-wrong_size_in_memset_call.patch
+# commit bd08ae67f9a0cae2ce15be885254cad9449d4551
+Patch1:         %{name}-2.66-Allow-option_number_zero_in_encapsulated_DHCP_options.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -53,6 +59,9 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
+
+%patch0 -p1 -b .wrong_size
+%patch1 -p1 -b .zero_DHCP_option
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -133,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Apr 19 2013 Tomas Hozza <thozza@redhat.com> - 2.66-3
+- include two fixes from upstream git repo
+
 * Thu Apr 18 2013 Tomas Hozza <thozza@redhat.com> - 2.66-2
 - New stable version dnsmasq-2.66
 - Drop of merged patch
