@@ -79,8 +79,8 @@ sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.examp
 
 
 %build
-# We need to compile the daemon with PIE
-RPM_LD_FLAGS="-Wl,-z,relro -pie"
+# We need to compile the daemon with PIE, PIC and FULL RELRO
+RPM_LD_FLAGS="-Wl,-z,relro,-z,now -pie"
 RPM_OPT_FLAGS="$RPM_OPT_FLAGS -fPIE -DPIE -fPIC"
 
 make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
@@ -146,7 +146,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
-* Fri Apr 19 2013 Tomas Hozza <thozza@redhat.com> - 2.66-3
+* Sat Apr 20 2013 Tomas Hozza <thozza@redhat.com> - 2.66-3
+- Use Full RELRO when linking the daemon
 - compile the daemon with PIE
 - include two fixes from upstream git repo
 
