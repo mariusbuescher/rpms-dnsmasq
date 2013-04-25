@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.66
-Release:        3%{?extraversion}%{?dist}
+Release:        4%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -25,6 +25,18 @@ Source1:        %{name}.service
 Patch0:         %{name}-2.66-Fix-wrong_size_in_memset_call.patch
 # commit bd08ae67f9a0cae2ce15be885254cad9449d4551
 Patch1:         %{name}-2.66-Allow-option_number_zero_in_encapsulated_DHCP_options.patch
+# commit 4b5ea12e90024ade5033b3b83a8b2620035952ba
+Patch2:         %{name}-2.66-Send-TCP-DNS-messages-in-one-write-call.patch
+# commit 797a7afba477390bc016c647cfb792c85ee6102d
+Patch3:         %{name}-2.66-Fix-crash-on-SERVFAIL-when-using-conntrack.patch
+# commit aa63a21ce0b20dfe988e0bcdf14b8b930de20311
+Patch4:         %{name}-2.66-Fix-regression-in-dhcp_lease_time-utility.patch
+# commit a66d36ea1112c861ad2f11ed40cc26973873e5be
+Patch5:         %{name}-2.66-Manpage-typos.patch
+# commit 1c10b9de118c951a5aedc130e55101987dcc3feb
+Patch6:         %{name}-2.66-Note-that-dhcp_lease_time-and-dhcp_release-work-for-IPv4.patch
+# commit 86e92f998379d219e10517dfa2c42f544ba164ce
+Patch7:         %{name}-2.66-dhcp-match-now-work-with-BOOTP.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -62,6 +74,12 @@ query/remove a DHCP server's leases.
 
 %patch0 -p1 -b .wrong_size
 %patch1 -p1 -b .zero_DHCP_option
+%patch2 -p1 -b .tcp_dns_in_one_packet
+%patch3 -p1 -b .SERVFAIL_crash
+%patch4 -p1 -b .dhcp_lease_time-regression
+%patch5 -p1
+%patch6 -p1 -b .utils_work_only_ipv4
+%patch7 -p1 -b .dhcp-match_bootp
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -146,6 +164,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Apr 25 2013 Tomas Hozza <thozza@redhat.com> - 2.66-4
+- include several fixes from upstream repo:
+  - Send TCP DNS messages in one packet
+  - Fix crash on SERVFAIL when using --conntrack option
+  - Fix regression in dhcp_lease_time utility
+  - Man page typos fixes
+  - Note that dhcp_lease_time and dhcp_release work only for IPv4
+  - Fix for --dhcp-match option to work also with BOOTP protocol
+
 * Sat Apr 20 2013 Tomas Hozza <thozza@redhat.com> - 2.66-3
 - Use Full RELRO when linking the daemon
 - compile the daemon with PIE
