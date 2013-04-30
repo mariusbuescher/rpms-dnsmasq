@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.66
-Release:        4%{?extraversion}%{?dist}
+Release:        5%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -164,6 +164,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Apr 30 2013 Tomas Hozza <thozza@redhat.com> - 2.66-5
+- dnsmasq unit file cleanup
+  - drop forking Type and PIDfile and rather start dnsmasq with "-k" option
+  - drop After syslog.target as this is by default
+
 * Thu Apr 25 2013 Tomas Hozza <thozza@redhat.com> - 2.66-4
 - include several fixes from upstream repo:
   - Send TCP DNS messages in one packet

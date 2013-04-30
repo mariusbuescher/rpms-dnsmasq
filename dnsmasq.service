@@ -1,11 +1,9 @@
 [Unit]
 Description=DNS caching server.
-After=syslog.target network.target
+After=network.target
 
 [Service]
-Type=forking
-PIDFile=/var/run/dnsmasq.pid
-ExecStart=/usr/sbin/dnsmasq
+ExecStart=/usr/sbin/dnsmasq -k
 
 [Install]
 WantedBy=multi-user.target
