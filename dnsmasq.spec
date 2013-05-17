@@ -11,7 +11,7 @@
 
 Name:           dnsmasq
 Version:        2.67
-Release:        0.1.%{?extraversion}%{?dist}
+Release:        0.2.%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,6 +19,10 @@ License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
+
+# Patches from upstream repo git://thekelleys.org.uk/dnsmasq.git
+# commit cfcad42ff1ddee8e64d120f18016a654152d0215 - Bug #962874
+Patch0:         %{name}-2.67-Fix-failure-to-start-with-ENOTSOCK.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -53,6 +57,8 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
+
+%patch0 -p1 -b .enotsock_failure
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -137,6 +143,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri May 17 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.2.test4
+- Fix failure to start with ENOTSOCK (#962874)
+
 * Wed May 15 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.1.test4
 - update to the latest testing release 2.67test4 (#962246)
 - drop mergerd patches
