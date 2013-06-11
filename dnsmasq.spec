@@ -2,16 +2,18 @@
 %define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
-  %define extraversion test4
+  %define extraversion test7
 %endif
 %if 0%{releasecandidate}
   %define extrapath release-candidates/
   %define extraversion rc5
 %endif
 
+%define _hardened_build 1
+
 Name:           dnsmasq
 Version:        2.67
-Release:        0.2.%{?extraversion}%{?dist}
+Release:        0.3.%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -19,10 +21,6 @@ License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
-
-# Patches from upstream repo git://thekelleys.org.uk/dnsmasq.git
-# commit cfcad42ff1ddee8e64d120f18016a654152d0215 - Bug #962874
-Patch0:         %{name}-2.67-Fix-failure-to-start-with-ENOTSOCK.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -58,8 +56,6 @@ query/remove a DHCP server's leases.
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
 
-%patch0 -p1 -b .enotsock_failure
-
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
     sed -i 's|/var/lib/misc/dnsmasq.leases|/var/lib/dnsmasq/dnsmasq.leases|g' "$file"
@@ -76,10 +72,6 @@ sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.examp
 
 
 %build
-# We need to compile the daemon with PIE, PIC and FULL RELRO
-RPM_LD_FLAGS="-Wl,-z,relro,-z,now -pie"
-RPM_OPT_FLAGS="$RPM_OPT_FLAGS -fPIE -DPIE -fPIC"
-
 make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
 make -C contrib/wrt %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
 
@@ -143,6 +135,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Jun 11 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.3.test7
+- update to 2.67test7
+- drop merged patch
+- use _hardened_build macro instead of hardcoded flags
+
 * Fri May 17 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.2.test4
 - Fix failure to start with ENOTSOCK (#962874)
 
