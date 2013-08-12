@@ -1,0 +1,17 @@
+diff -up dnsmasq-2.66/src/dhcp.c.reuseport dnsmasq-2.66/src/dhcp.c
+--- dnsmasq-2.66/src/dhcp.c.reuseport	2013-08-12 14:35:07.575237403 +0200
++++ dnsmasq-2.66/src/dhcp.c	2013-08-12 14:35:48.220273629 +0200
+@@ -72,11 +72,13 @@ static int make_fd(int port)
+     {
+       int rc = -1, porterr = 0;
+ 
++/*
+ #ifdef SO_REUSEPORT
+       if ((rc = setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &oneopt, sizeof(oneopt))) == -1 && 
+ 	  errno != ENOPROTOOPT)
+ 	porterr = 1;
+ #endif
++*/
+       
+       if (rc == -1 && !porterr)
+ 	rc = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &oneopt, sizeof(oneopt));
