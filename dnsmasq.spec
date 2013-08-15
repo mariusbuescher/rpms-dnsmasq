@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.67
-Release:        0.5.%{?extraversion}%{?dist}
+Release:        0.6.%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -22,8 +22,9 @@ URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
 Source1:        %{name}.service
 
-# Don't use SO_REUSEPORT on DHCPv4 socket to prevent conflicts with ISC DHCP 
-Patch0:        %{name}-2.66-Dont_use_SO_REUSEPORT_on_dhcp4_socket.patch
+# commit ffbad34b310ab2db6a686c85f5c0a0e52c0680c8
+Patch0:        %{name}-2.66-Set-SOREUSEADDR-as-well-as-SOREUSEPORT-on-DHCP-socke.patch
+
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -140,6 +141,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Aug 15 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.6.test7
+- Use SO_REUSEPORT and SO_REUSEADDR if possible for DHCPv4/6 (#981973)
+
 * Mon Aug 12 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.5.test7
 - Don't use SO_REUSEPORT on DHCPv4 socket to prevent conflicts with ISC DHCP (#981973)
 
