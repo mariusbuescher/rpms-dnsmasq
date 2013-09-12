@@ -2,7 +2,7 @@
 %define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
-  %define extraversion test7
+  %define extraversion test13
 %endif
 %if 0%{releasecandidate}
   %define extrapath release-candidates/
@@ -13,18 +13,16 @@
 
 Name:           dnsmasq
 Version:        2.67
-Release:        0.6.%{?extraversion}%{?dist}
+Release:        0.7.%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://www.thekelleys.org.uk/dnsmasq/
-Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.gz
+Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
 Source1:        %{name}.service
 
-# commit ffbad34b310ab2db6a686c85f5c0a0e52c0680c8
-Patch0:        %{name}-2.66-Set-SOREUSEADDR-as-well-as-SOREUSEPORT-on-DHCP-socke.patch
-
+# Patches
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -59,8 +57,6 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
-
-%patch0 -p1 -b .reuseport
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -141,6 +137,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Sep 12 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.7.test13
+- update to 2.67test13
+- use .tar.xz upstream archives
+
 * Thu Aug 15 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.6.test7
 - Use SO_REUSEPORT and SO_REUSEADDR if possible for DHCPv4/6 (#981973)
 
