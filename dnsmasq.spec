@@ -1,19 +1,19 @@
-%define testrelease 1
-%define releasecandidate 0
+%define testrelease 0
+%define releasecandidate 1
 %if 0%{testrelease}
   %define extrapath test-releases/
-  %define extraversion test13
+  %define extraversion test16
 %endif
 %if 0%{releasecandidate}
   %define extrapath release-candidates/
-  %define extraversion rc5
+  %define extraversion rc2
 %endif
 
 %define _hardened_build 1
 
 Name:           dnsmasq
 Version:        2.67
-Release:        0.7.%{?extraversion}%{?dist}
+Release:        0.8.%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -137,6 +137,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Oct 02 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.8.rc2
+- update to 2.67rc2
+
 * Thu Sep 12 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.7.test13
 - update to 2.67test13
 - use .tar.xz upstream archives
