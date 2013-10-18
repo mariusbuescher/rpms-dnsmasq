@@ -6,14 +6,14 @@
 %endif
 %if 0%{releasecandidate}
   %define extrapath release-candidates/
-  %define extraversion rc2
+  %define extraversion rc4
 %endif
 
 %define _hardened_build 1
 
 Name:           dnsmasq
 Version:        2.67
-Release:        0.8.%{?extraversion}%{?dist}
+Release:        0.9.%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -137,6 +137,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Oct 18 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.9.rc4
+- update to 2.67rc4
+
 * Wed Oct 02 2013 Tomas Hozza <thozza@redhat.com> - 2.67-0.8.rc2
 - update to 2.67rc2
 
