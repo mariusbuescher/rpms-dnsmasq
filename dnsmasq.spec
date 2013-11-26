@@ -1,19 +1,19 @@
 %define testrelease 0
-%define releasecandidate 0
+%define releasecandidate 1
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test16
 %endif
 %if 0%{releasecandidate}
   %define extrapath release-candidates/
-  %define extraversion rc4
+  %define extraversion rc3
 %endif
 
 %define _hardened_build 1
 
 Name:           dnsmasq
-Version:        2.67
-Release:        1%{?extraversion}%{?dist}
+Version:        2.68
+Release:        0.1.%{?extraversion}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -23,7 +23,7 @@ Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{vers
 Source1:        %{name}.service
 
 # Patches
-Patch0:         %{name}-2.67-Fix-check-for-local-domains-in-CNAME-case.patch
+Patch0:         %{name}-2.68-Add-missing-malloc-return-code-check.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -58,7 +58,7 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
-%patch0 -p1 -b .cname
+%patch0 -p1
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -139,6 +139,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Nov 26 2013 Tomas Hozza <thozza@redhat.com> - 2.68-0.1.rc3
+- Update to 2.68rc3
+
 * Fri Nov 01 2013 Tomas Hozza <thozza@redhat.com> - 2.67-1
 - Update to 2.67 stable
 - Include one post release upstream fix for CNAME
