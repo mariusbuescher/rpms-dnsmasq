@@ -1,19 +1,19 @@
 %define testrelease 0
-%define releasecandidate 0
+%define releasecandidate 1
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test16
 %endif
 %if 0%{releasecandidate}
   %define extrapath release-candidates/
-  %define extraversion rc3
+  %define extraversion rc1
 %endif
 
 %define _hardened_build 1
 
 Name:           dnsmasq
-Version:        2.68
-Release:        1%{?extraversion}%{?dist}
+Version:        2.69
+Release:        0.1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -29,6 +29,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
 BuildRequires:  libidn-devel
+BuildRequires:  nettle-devel
 
 BuildRequires:  systemd
 Requires(post): systemd systemd-sysv chkconfig
@@ -68,6 +69,9 @@ sed -i 's|/\* #define HAVE_DBUS \*/|#define HAVE_DBUS|g' src/config.h
 
 #enable IDN support
 sed -i 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' src/config.h
+
+#enable DNSSEC support
+sed -i 's|/\* #define HAVE_DNSSEC \*/|#define HAVE_DNSSEC|g' src/config.h
 
 #enable /etc/dnsmasq.d fix bz 526703
 sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.example
@@ -137,6 +141,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Mar 24 2014 Tomas Hozza <thozza@redhat.com> - 2.69-0.1.rc1
+- Update to 2.69rc1
+- enable DNSSEC implementation
+
 * Mon Dec 09 2013 Tomas Hozza <thozza@redhat.com> - 2.68-1
 - Update to 2.68 stable
 
