@@ -1,5 +1,5 @@
 %define testrelease 0
-%define releasecandidate 1
+%define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test16
@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.69
-Release:        0.1%{?extraversion:.%{extraversion}}%{?dist}
+Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -141,6 +141,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Apr 11 2014 Tomas Hozza <thozza@redhat.com> - 2.69-1
+- Update to 2.69 stable
+
 * Mon Mar 24 2014 Tomas Hozza <thozza@redhat.com> - 2.69-0.1.rc1
 - Update to 2.69rc1
 - enable DNSSEC implementation
