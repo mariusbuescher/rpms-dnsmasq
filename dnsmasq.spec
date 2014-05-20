@@ -12,7 +12,7 @@
 %define _hardened_build 1
 
 Name:           dnsmasq
-Version:        2.70
+Version:        2.71
 Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
@@ -141,6 +141,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue May 20 2014 Tomas Hozza <thozza@redhat.com> - 2.71-1
+- Update to 2.71 stable
+
 * Fri Apr 25 2014 Tomas Hozza <thozza@redhat.com> - 2.70-1
 - Update to 2.70 stable
 
