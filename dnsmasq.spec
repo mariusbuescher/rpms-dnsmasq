@@ -12,8 +12,8 @@
 %define _hardened_build 1
 
 Name:           dnsmasq
-Version:        2.71
-Release:        3%{?extraversion:.%{extraversion}}%{?dist}
+Version:        2.72
+Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -141,6 +141,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Sep 25 2014 Tomas Hozza <thozza@redhat.com> - 2.72-1
+- Update to 2.72 stable
+
 * Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.71-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
