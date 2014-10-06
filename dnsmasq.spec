@@ -33,10 +33,10 @@ BuildRequires:  libidn-devel
 BuildRequires:  nettle-devel
 
 BuildRequires:  systemd
-Requires(post): systemd systemd-sysv chkconfig
+Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
-
+Requires(triggerun): systemd systemd-sysv chkconfig
 
 %description
 Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server.
@@ -151,6 +151,7 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Oct 06 2014 Nils Philippsen <nils@redhat.com>
 - don't include /etc/dnsmasq.d in triplicate, ignore RPM backup files instead
 - package is dual-licensed GPL v2 or v3
+- only require systemd-sysv and chkconfig for %%triggerun
 
 * Mon Oct 06 2014 Tomas Hozza <thozza@redhat.com> - 2.72-2
 - Fix typo in default configuration (#1149459)
