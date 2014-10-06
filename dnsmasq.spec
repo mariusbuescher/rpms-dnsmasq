@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.72
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Release:        3%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -148,7 +148,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
-* Mon Oct 06 2014 Nils Philippsen <nils@redhat.com>
+* Mon Oct 06 2014 Nils Philippsen <nils@redhat.com> - 2.72-3
 - don't include /etc/dnsmasq.d in triplicate, ignore RPM backup files instead
 - package is dual-licensed GPL v2 or v3
 - only require systemd-sysv and chkconfig for %%triggerun
