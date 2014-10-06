@@ -76,8 +76,12 @@ sed -i 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' src/config.h
 #enable DNSSEC support
 sed -i 's|/\* #define HAVE_DNSSEC \*/|#define HAVE_DNSSEC|g' src/config.h
 
-#enable /etc/dnsmasq.d fix bz 526703
-sed -i 's|#conf-dir=/etc/dnsmasq.d|conf-dir=/etc/dnsmasq.d|g' dnsmasq.conf.example
+#enable /etc/dnsmasq.d fix bz 526703, ignore RPM backup files
+cat << EOF >> dnsmasq.conf.example
+
+# Include all files in /etc/dnsmasq.d except RPM backup files
+conf-dir=/etc/dnsmasq.d,.rpmnew,.rpmsave,.rpmorig
+EOF
 
 
 %build
@@ -144,6 +148,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Oct 06 2014 Nils Philippsen <nils@redhat.com>
+- don't include /etc/dnsmasq.d in triplicate, ignore RPM backup files instead
+
 * Mon Oct 06 2014 Tomas Hozza <thozza@redhat.com> - 2.72-2
 - Fix typo in default configuration (#1149459)
 
