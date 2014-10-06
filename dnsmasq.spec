@@ -17,7 +17,7 @@ Release:        2%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
-License:        GPLv2
+License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
 Source1:        %{name}.service
@@ -134,7 +134,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc CHANGELOG COPYING FAQ doc.html setup.html dbus/DBus-interface
+%doc CHANGELOG COPYING COPYING-v3 FAQ doc.html setup.html dbus/DBus-interface
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
 %dir /etc/dnsmasq.d
 %dir %{_var}/lib/dnsmasq
@@ -150,6 +150,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Oct 06 2014 Nils Philippsen <nils@redhat.com>
 - don't include /etc/dnsmasq.d in triplicate, ignore RPM backup files instead
+- package is dual-licensed GPL v2 or v3
 
 * Mon Oct 06 2014 Tomas Hozza <thozza@redhat.com> - 2.72-2
 - Fix typo in default configuration (#1149459)
