@@ -36,7 +36,6 @@ BuildRequires:  systemd
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
-Requires(triggerun): systemd systemd-sysv chkconfig
 
 %description
 Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server.
@@ -127,11 +126,6 @@ rm -rf $RPM_BUILD_ROOT
 %postun
 %systemd_postun_with_restart dnsmasq.service
 
-%triggerun -- dnsmasq < 2.52-3
-%{_bindir}/systemd-sysv-convert --save dnsmasq >/dev/null 2>&1 ||:
-/sbin/chkconfig --del dnsmasq >/dev/null 2>&1 || :
-/bin/systemctl try-restart dnsmasq.service >/dev/null 2>&1 || :
-
 %files
 %defattr(-,root,root,-)
 %doc CHANGELOG COPYING COPYING-v3 FAQ doc.html setup.html dbus/DBus-interface
@@ -151,7 +145,8 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Oct 06 2014 Nils Philippsen <nils@redhat.com> - 2.72-3
 - don't include /etc/dnsmasq.d in triplicate, ignore RPM backup files instead
 - package is dual-licensed GPL v2 or v3
-- only require systemd-sysv and chkconfig for %%triggerun
+- drop %%triggerun, we're not supposed to automatically migrate from SysV to
+  systemd anyway
 
 * Mon Oct 06 2014 Tomas Hozza <thozza@redhat.com> - 2.72-2
 - Fix typo in default configuration (#1149459)
