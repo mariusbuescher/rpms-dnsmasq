@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.72
-Release:        1%{?extraversion:.%{extraversion}}%{?dist}
+Release:        2%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -23,6 +23,7 @@ Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{vers
 Source1:        %{name}.service
 
 # Patches
+Patch1:         dnsmasq-2.72-configuration.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -58,6 +59,8 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
+
+%patch1 -p1 -b .syntax_err
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -141,6 +144,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Oct 06 2014 Tomas Hozza <thozza@redhat.com> - 2.72-2
+- Fix typo in default configuration (#1149459)
+
 * Thu Sep 25 2014 Tomas Hozza <thozza@redhat.com> - 2.72-1
 - Update to 2.72 stable
 
