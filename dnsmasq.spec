@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.72
-Release:        3%{?extraversion:.%{extraversion}}%{?dist}
+Release:        4%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -142,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.72-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Mon Oct 06 2014 Nils Philippsen <nils@redhat.com> - 2.72-3
 - don't include /etc/dnsmasq.d in triplicate, ignore RPM backup files instead
 - package is dual-licensed GPL v2 or v3
