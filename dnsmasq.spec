@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.75
-Release:        1%{?extraversion:.%{extraversion}}%{?dist}
+Release:        2%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -61,6 +61,8 @@ for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
     sed -i 's|/var/lib/misc/dnsmasq.leases|/var/lib/dnsmasq/dnsmasq.leases|g' "$file"
 done
 
+sed -i "s:%%PREFIX%%:${EPREFIX}/usr:" dnsmasq.conf.example
+
 #enable dbus
 sed -i 's|/\* #define HAVE_DBUS \*/|#define HAVE_DBUS|g' src/config.h
 
@@ -95,6 +97,7 @@ install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
 install dnsmasq.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.conf
 install dbus/dnsmasq.conf $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/
 install -m 644 man/dnsmasq.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+install -D trust-anchors.conf $RPM_BUILD_ROOT%{_datadir}/%{name}/trust-anchors.conf
 
 # utils sub package
 mkdir -p $RPM_BUILD_ROOT%{_bindir} \
@@ -131,12 +134,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_unitdir}/%{name}.service
 %{_sbindir}/dnsmasq
 %{_mandir}/man8/dnsmasq*
+%{_datadir}/%{name}/trust-anchors.conf
 
 %files utils
 %{_bindir}/dhcp_*
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Oct 02 2015 Pavel Šimerda <psimerda@redhat.com> - 2.75-2
+- Resolves: #1239256 - install trust-anchors.conf
+
 * Wed Aug 05 2015 Pavel Šimerda <psimerda@redhat.com> - 2.75-1
 - new version 2.75
 
