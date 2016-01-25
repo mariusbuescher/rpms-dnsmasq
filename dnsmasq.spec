@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.75
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Release:        3%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -61,7 +61,8 @@ for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
     sed -i 's|/var/lib/misc/dnsmasq.leases|/var/lib/dnsmasq/dnsmasq.leases|g' "$file"
 done
 
-sed -i "s:%%PREFIX%%:${EPREFIX}/usr:" dnsmasq.conf.example
+# fix the path to the trust anchor
+sed -i 's|%%%%PREFIX%%%%|%{_prefix}|' dnsmasq.conf.example
 
 #enable dbus
 sed -i 's|/\* #define HAVE_DBUS \*/|#define HAVE_DBUS|g' src/config.h
@@ -141,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Jan 25 2016 Tomas Hozza <thozza@redhat.com> - 2.75-3
+- Fixed minor bug in dnsmasq.conf (#1295143)
+
 * Fri Oct 02 2015 Pavel Šimerda <psimerda@redhat.com> - 2.75-2
 - Resolves: #1239256 - install trust-anchors.conf
 
