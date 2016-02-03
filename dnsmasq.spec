@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.75
-Release:        3%{?extraversion:.%{extraversion}}%{?dist}
+Release:        4%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -142,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.75-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Mon Jan 25 2016 Tomas Hozza <thozza@redhat.com> - 2.75-3
 - Fixed minor bug in dnsmasq.conf (#1295143)
 
