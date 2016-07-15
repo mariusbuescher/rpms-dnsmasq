@@ -12,8 +12,8 @@
 %define _hardened_build 1
 
 Name:           dnsmasq
-Version:        2.75
-Release:        4%{?extraversion:.%{extraversion}}%{?dist}
+Version:        2.76
+Release:        1%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -83,7 +83,7 @@ EOF
 
 %build
 make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
-make -C contrib/wrt %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
+make -C contrib/lease-tools %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
 
 
 %install
@@ -103,10 +103,10 @@ install -D trust-anchors.conf $RPM_BUILD_ROOT%{_datadir}/%{name}/trust-anchors.c
 # utils sub package
 mkdir -p $RPM_BUILD_ROOT%{_bindir} \
          $RPM_BUILD_ROOT%{_mandir}/man1
-install -m 755 contrib/wrt/dhcp_release $RPM_BUILD_ROOT%{_bindir}/dhcp_release
-install -m 644 contrib/wrt/dhcp_release.1 $RPM_BUILD_ROOT%{_mandir}/man1/dhcp_release.1
-install -m 755 contrib/wrt/dhcp_lease_time $RPM_BUILD_ROOT%{_bindir}/dhcp_lease_time
-install -m 644 contrib/wrt/dhcp_lease_time.1 $RPM_BUILD_ROOT%{_mandir}/man1/dhcp_lease_time.1
+install -m 755 contrib/lease-tools/dhcp_release $RPM_BUILD_ROOT%{_bindir}/dhcp_release
+install -m 644 contrib/lease-tools/dhcp_release.1 $RPM_BUILD_ROOT%{_mandir}/man1/dhcp_release.1
+install -m 755 contrib/lease-tools/dhcp_lease_time $RPM_BUILD_ROOT%{_bindir}/dhcp_lease_time
+install -m 644 contrib/lease-tools/dhcp_lease_time.1 $RPM_BUILD_ROOT%{_mandir}/man1/dhcp_lease_time.1
 
 # Systemd
 mkdir -p %{buildroot}%{_unitdir}
@@ -142,6 +142,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Jul 15 2016 Pavel Šimerda <psimerda@redhat.com> - 2.76-1
+- New version 2.76
+
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.75-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
