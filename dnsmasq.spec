@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.76
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -21,6 +21,10 @@ License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
 Source1:        %{name}.service
+
+# dns not updated after sleep and resume laptop
+# https://bugzilla.redhat.com/show_bug.cgi?id=1367772
+Patch0:         dnsmasq-2.76-dns-sleep-resume.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -55,6 +59,7 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
+%patch0 -p1
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -142,6 +147,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Oct 19 2016 Pavel Šimerda <psimerda@redhat.com> - 2.76-2
+- Resolves: #1373485 - dns not updated after sleep and resume laptop
+
 * Fri Jul 15 2016 Pavel Šimerda <psimerda@redhat.com> - 2.76-1
 - New version 2.76
 
