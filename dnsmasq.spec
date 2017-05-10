@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.76
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -110,6 +110,8 @@ mkdir -p $RPM_BUILD_ROOT%{_bindir} \
          $RPM_BUILD_ROOT%{_mandir}/man1
 install -m 755 contrib/lease-tools/dhcp_release $RPM_BUILD_ROOT%{_bindir}/dhcp_release
 install -m 644 contrib/lease-tools/dhcp_release.1 $RPM_BUILD_ROOT%{_mandir}/man1/dhcp_release.1
+install -m 755 contrib/lease-tools/dhcp_release6 $RPM_BUILD_ROOT%{_bindir}/dhcp_release6
+install -m 644 contrib/lease-tools/dhcp_release6.1 $RPM_BUILD_ROOT%{_mandir}/man1/dhcp_release6.1
 install -m 755 contrib/lease-tools/dhcp_lease_time $RPM_BUILD_ROOT%{_bindir}/dhcp_lease_time
 install -m 644 contrib/lease-tools/dhcp_lease_time.1 $RPM_BUILD_ROOT%{_mandir}/man1/dhcp_lease_time.1
 
@@ -132,7 +134,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc CHANGELOG COPYING COPYING-v3 FAQ doc.html setup.html dbus/DBus-interface
+%doc CHANGELOG FAQ doc.html setup.html dbus/DBus-interface
+%license COPYING COPYING-v3
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
 %dir /etc/dnsmasq.d
 %dir %{_var}/lib/dnsmasq
@@ -143,10 +146,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/trust-anchors.conf
 
 %files utils
+%license COPYING COPYING-v3
 %{_bindir}/dhcp_*
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu May 11 2017 Petr Menšík <pemensik@redhat.com>
+- Include dhcp_release6 tool and license in utils
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.76-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
