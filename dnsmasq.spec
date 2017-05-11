@@ -25,12 +25,13 @@ Source1:        %{name}.service
 # dns not updated after sleep and resume laptop
 # https://bugzilla.redhat.com/show_bug.cgi?id=1367772
 Patch0:         dnsmasq-2.76-dns-sleep-resume.patch
+Patch1:         dnsmasq-2.76-libidn2.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
-BuildRequires:  libidn-devel
+BuildRequires:  libidn2-devel
 BuildRequires:  nettle-devel
 
 BuildRequires:  systemd
@@ -60,6 +61,7 @@ query/remove a DHCP server's leases.
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
 %patch0 -p1
+%patch1 -p1
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -73,7 +75,7 @@ sed -i 's|%%%%PREFIX%%%%|%{_prefix}|' dnsmasq.conf.example
 sed -i 's|/\* #define HAVE_DBUS \*/|#define HAVE_DBUS|g' src/config.h
 
 #enable IDN support
-sed -i 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' src/config.h
+sed -i 's|/\* #define HAVE_LIBIDN2 \*/|#define HAVE_LIBIDN2|g' src/config.h
 
 #enable DNSSEC support
 sed -i 's|/\* #define HAVE_DNSSEC \*/|#define HAVE_DNSSEC|g' src/config.h
@@ -153,6 +155,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu May 11 2017 Petr Menšík <pemensik@redhat.com>
 - Include dhcp_release6 tool and license in utils
+- Support for IDN 2008 (#1449150)
 
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.76-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild

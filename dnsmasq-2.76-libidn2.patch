@@ -1,0 +1,128 @@
+From 53ba1f8632b1fb09b5bf78e5bc355eebed2bc8b4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20Men=C5=A1=C3=ADk?= <pemensik@redhat.com>
+Date: Tue, 9 May 2017 18:56:16 +0200
+Subject: [PATCH] Support for libidn2
+
+---
+ Makefile     |  6 ++++--
+ src/config.h | 10 +++++++++-
+ src/util.c   | 19 ++++++++++++++-----
+ 3 files changed, 27 insertions(+), 8 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index dd0513b..eacf5d4 100644
+--- a/Makefile
++++ b/Makefile
+@@ -55,6 +55,8 @@ dbus_cflags =   `echo $(COPTS) | $(top)/bld/pkg-wrapper HAVE_DBUS $(PKG_CONFIG)
+ dbus_libs =     `echo $(COPTS) | $(top)/bld/pkg-wrapper HAVE_DBUS $(PKG_CONFIG) --libs dbus-1` 
+ idn_cflags =    `echo $(COPTS) | $(top)/bld/pkg-wrapper HAVE_IDN $(PKG_CONFIG) --cflags libidn` 
+ idn_libs =      `echo $(COPTS) | $(top)/bld/pkg-wrapper HAVE_IDN $(PKG_CONFIG) --libs libidn` 
++idn2_cflags =   `echo $(COPTS) | $(top)/bld/pkg-wrapper HAVE_LIBIDN2 $(PKG_CONFIG) --cflags libidn2`
++idn2_libs =     `echo $(COPTS) | $(top)/bld/pkg-wrapper HAVE_LIBIDN2 $(PKG_CONFIG) --libs libidn2`
+ ct_cflags =     `echo $(COPTS) | $(top)/bld/pkg-wrapper HAVE_CONNTRACK $(PKG_CONFIG) --cflags libnetfilter_conntrack`
+ ct_libs =       `echo $(COPTS) | $(top)/bld/pkg-wrapper HAVE_CONNTRACK $(PKG_CONFIG) --libs libnetfilter_conntrack`
+ lua_cflags =    `echo $(COPTS) | $(top)/bld/pkg-wrapper HAVE_LUASCRIPT $(PKG_CONFIG) --cflags lua5.1` 
+@@ -82,8 +84,8 @@ hdrs = dnsmasq.h config.h dhcp-protocol.h dhcp6-protocol.h \
+ all : $(BUILDDIR)
+ 	@cd $(BUILDDIR) && $(MAKE) \
+  top="$(top)" \
+- build_cflags="$(version) $(dbus_cflags) $(idn_cflags) $(ct_cflags) $(lua_cflags) $(nettle_cflags)" \
+- build_libs="$(dbus_libs) $(idn_libs) $(ct_libs) $(lua_libs) $(sunos_libs) $(nettle_libs) $(gmp_libs)" \
++ build_cflags="$(version) $(dbus_cflags) $(idn2_cflags) $(idn_cflags) $(ct_cflags) $(lua_cflags) $(nettle_cflags)" \
++ build_libs="$(dbus_libs) $(idn2_libs) $(idn_libs) $(ct_libs) $(lua_libs) $(sunos_libs) $(nettle_libs) $(gmp_libs)" \
+  -f $(top)/Makefile dnsmasq 
+ 
+ mostly_clean :
+diff --git a/src/config.h b/src/config.h
+index 80a50e1..c9e24e5 100644
+--- a/src/config.h
++++ b/src/config.h
+@@ -92,11 +92,14 @@ HAVE_DBUS
+    servers via DBus.
+ 
+ HAVE_IDN
+-   define this if you want international domain name support.
++   define this if you want international domain name 2003 support.
+    NOTE: for backwards compatibility, IDN support is automatically 
+          included when internationalisation support is built, using the 
+ 	 *-i18n makefile targets, even if HAVE_IDN is not explicitly set.
+ 
++HAVE_LIBIDN2
++   define this if you want international domain name 2008 support.
++
+ HAVE_CONNTRACK
+    define this to include code which propogates conntrack marks from
+    incoming DNS queries to the corresponding upstream queries. This adds
+@@ -173,6 +176,7 @@ RESOLVFILE
+ /* #define HAVE_LUASCRIPT */
+ /* #define HAVE_DBUS */
+ /* #define HAVE_IDN */
++/* #define HAVE_LIBIDN2 */
+ /* #define HAVE_CONNTRACK */
+ /* #define HAVE_DNSSEC */
+ 
+@@ -396,6 +400,10 @@ static char *compile_opts =
+ "no-"
+ #endif 
+ "IDN "
++#if !defined(HAVE_LIBIDN2)
++"no-"
++#endif
++"IDN2 "
+ #ifndef HAVE_DHCP
+ "no-"
+ #endif
+diff --git a/src/util.c b/src/util.c
+index 93b24f5..0d3285f 100644
+--- a/src/util.c
++++ b/src/util.c
+@@ -24,7 +24,9 @@
+ #include <sys/times.h>
+ #endif
+ 
+-#if defined(LOCALEDIR) || defined(HAVE_IDN)
++#ifdef HAVE_LIBIDN2
++#include <idn2.h>
++#elif defined(LOCALEDIR) || defined(HAVE_IDN)
+ #include <idna.h>
+ #endif
+ 
+@@ -134,7 +136,7 @@ static int check_name(char *in)
+       else if (isascii((unsigned char)c) && iscntrl((unsigned char)c)) 
+ 	/* iscntrl only gives expected results for ascii */
+ 	return 0;
+-#if !defined(LOCALEDIR) && !defined(HAVE_IDN)
++#if !defined(LOCALEDIR) && !defined(HAVE_IDN) && !defined(HAVE_LIBIDN2)
+       else if (!isascii((unsigned char)c))
+ 	return 0;
+ #endif
+@@ -184,7 +186,7 @@ int legal_hostname(char *name)
+ char *canonicalise(char *in, int *nomem)
+ {
+   char *ret = NULL;
+-#if defined(LOCALEDIR) || defined(HAVE_IDN)
++#if defined(LOCALEDIR) || defined(HAVE_IDN) || defined(HAVE_LIBIDN2)
+   int rc;
+ #endif
+ 
+@@ -194,8 +196,15 @@ char *canonicalise(char *in, int *nomem)
+   if (!check_name(in))
+     return NULL;
+   
+-#if defined(LOCALEDIR) || defined(HAVE_IDN)
+-  if ((rc = idna_to_ascii_lz(in, &ret, 0)) != IDNA_SUCCESS)
++#if defined(LOCALEDIR) || defined(HAVE_IDN) || defined(HAVE_LIBIDN2)
++#ifdef HAVE_LIBIDN2
++  rc = idn2_to_ascii_lz(in, &ret, IDN2_NONTRANSITIONAL);
++  if (rc == IDN2_DISALLOWED)
++    rc = idn2_to_ascii_lz(in, &ret, IDN2_TRANSITIONAL);
++#else
++  rc = idna_to_ascii_lz(in, &ret, 0);
++#endif
++  if (rc != IDNA_SUCCESS)
+     {
+       if (ret)
+ 	free(ret);
+-- 
+2.9.3
+
