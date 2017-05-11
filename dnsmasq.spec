@@ -1,19 +1,19 @@
 %define testrelease 0
-%define releasecandidate 0
+%define releasecandidate 2
 %if 0%{testrelease}
   %define extrapath test-releases/
-  %define extraversion test16
+  %define extraversion test%{testrelease}
 %endif
 %if 0%{releasecandidate}
   %define extrapath release-candidates/
-  %define extraversion rc1
+  %define extraversion rc%{releasecandidate}
 %endif
 
 %define _hardened_build 1
 
 Name:           dnsmasq
-Version:        2.76
-Release:        4%{?dist}
+Version:        2.77
+Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -21,11 +21,6 @@ License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
 Source1:        %{name}.service
-
-# dns not updated after sleep and resume laptop
-# https://bugzilla.redhat.com/show_bug.cgi?id=1367772
-Patch0:         dnsmasq-2.76-dns-sleep-resume.patch
-Patch1:         dnsmasq-2.76-libidn2.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -60,8 +55,6 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
-%patch0 -p1
-%patch1 -p1
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -71,14 +64,8 @@ done
 # fix the path to the trust anchor
 sed -i 's|%%%%PREFIX%%%%|%{_prefix}|' dnsmasq.conf.example
 
-#enable dbus
-sed -i 's|/\* #define HAVE_DBUS \*/|#define HAVE_DBUS|g' src/config.h
-
-#enable IDN support
-sed -i 's|/\* #define HAVE_LIBIDN2 \*/|#define HAVE_LIBIDN2|g' src/config.h
-
-#enable DNSSEC support
-sed -i 's|/\* #define HAVE_DNSSEC \*/|#define HAVE_DNSSEC|g' src/config.h
+# optional parts
+sed -i 's|^COPTS[[:space:]]*=|\0 -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_DNSSEC|' Makefile
 
 #enable /etc/dnsmasq.d fix bz 526703, ignore RPM backup files
 cat << EOF >> dnsmasq.conf.example
@@ -153,6 +140,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu May 11 2017 Petr Menšík <pemensik@redhat.com> - 2.77-1
+- Update to 2.77rc2
+
 * Thu May 11 2017 Petr Menšík <pemensik@redhat.com>
 - Include dhcp_release6 tool and license in utils
 - Support for IDN 2008 (#1449150)
