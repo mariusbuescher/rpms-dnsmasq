@@ -1,0 +1,25 @@
+From 7ab78b937fc1b98a1e47a63b2cc1f8451cd7c5fa Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Thu, 11 May 2017 20:33:21 +0100
+Subject: [PATCH] Fix c7be0164ce6ae89d6f2f0ffea14e2612418dd5da
+
+---
+ src/dhcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/dhcp.c b/src/dhcp.c
+index 232e344..f995f0e 100644
+--- a/src/dhcp.c
++++ b/src/dhcp.c
+@@ -224,7 +224,7 @@ void dhcp_packet(time_t now, int pxe_fd)
+ #endif
+ 	
+   if (!indextoname(daemon->dhcpfd, iface_index, ifr.ifr_name) ||
+-      ioctl(daemon->dhcpfd, SIOCGIFFLAGS, &ifr) != -1)
++      ioctl(daemon->dhcpfd, SIOCGIFFLAGS, &ifr) != 0)
+     return;
+   
+   mess = (struct dhcp_packet *)daemon->dhcp_packet.iov_base;
+-- 
+2.9.3
+
