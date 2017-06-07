@@ -1,5 +1,5 @@
 %define testrelease 0
-%define releasecandidate 2
+%define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test%{testrelease}
@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.77
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Release:        3%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -21,8 +21,6 @@ License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
 Source1:        %{name}.service
-
-Patch1:          dnsmasq-2.77rc3-fix-dhcp.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -57,7 +55,6 @@ query/remove a DHCP server's leases.
 
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
-%patch1 -p1
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -143,6 +140,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Jun 07 2017 Petr Menšík <pemensik@redhat.com> - 2.77-3
+- Update to 2.77
+
 * Fri May 12 2017 Petr Menšík <pemensik@redhat.com> - 2.77-2.rc2
 - Fix dhcp
 
