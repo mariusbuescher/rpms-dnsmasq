@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.77
-Release:        5%{?extraversion:.%{extraversion}}%{?dist}
+Release:        6%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -132,6 +132,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_unitdir}/%{name}.service
 %{_sbindir}/dnsmasq
 %{_mandir}/man8/dnsmasq*
+%dir %{_datadir}/%{name}
 %{_datadir}/%{name}/trust-anchors.conf
 
 %files utils
@@ -140,6 +141,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Aug 14 2017 Petr Menšík <pemensik@redhat.com> - 2.77-6
+- Own the /usr/share/dnsmasq dir (#1480856)
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.77-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
