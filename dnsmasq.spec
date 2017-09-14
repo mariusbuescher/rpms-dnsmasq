@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.77
-Release:        6%{?extraversion:.%{extraversion}}%{?dist}
+Release:        7%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -141,6 +141,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Sep 14 2017 Petr Menšík <pemensik@redhat.com> - 2.77-7
+- Fix CVE-2017-13704
+
 * Mon Aug 14 2017 Petr Menšík <pemensik@redhat.com> - 2.77-6
 - Own the /usr/share/dnsmasq dir (#1480856)
 
