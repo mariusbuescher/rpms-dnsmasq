@@ -29,6 +29,7 @@ Patch4:         dnsmasq-2.77-CVE-2017-14493.patch
 Patch5:         dnsmasq-2.77-CVE-2017-14494.patch
 Patch6:         dnsmasq-2.77-CVE-2017-14496.patch
 Patch7:         dnsmasq-2.77-CVE-2017-14495.patch
+Patch8:         dnsmasq-2.77-misc-cleanups.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -70,6 +71,7 @@ query/remove a DHCP server's leases.
 %patch5 -p1 -b .CVE-2017-14494
 %patch6 -p1 -b .CVE-2017-14496
 %patch7 -p1 -b .CVE-2017-14495
+%patch8 -p1 -b .misc-cleanups
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -163,6 +165,7 @@ rm -rf $RPM_BUILD_ROOT
 - Security fix, CVE-2017-14494, Infoleak handling DHCPv6
 - Security fix, CVE-2017-14496, Integer underflow in DNS response creation
 - Security fix, CVE-2017-14495, OOM in DNS response creation
+- Misc code cleanups arising from Google analysis
 
 * Thu Sep 14 2017 Petr Menšík <pemensik@redhat.com> - 2.77-7
 - Fix CVE-2017-13704
