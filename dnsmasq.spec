@@ -30,6 +30,7 @@ Patch5:         dnsmasq-2.77-CVE-2017-14494.patch
 Patch6:         dnsmasq-2.77-CVE-2017-14496.patch
 Patch7:         dnsmasq-2.77-CVE-2017-14495.patch
 Patch8:         dnsmasq-2.77-misc-cleanups.patch
+Patch9:         dnsmasq-2.77-CVE-2017-14491-2.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -72,6 +73,7 @@ query/remove a DHCP server's leases.
 %patch6 -p1 -b .CVE-2017-14496
 %patch7 -p1 -b .CVE-2017-14495
 %patch8 -p1 -b .misc-cleanups
+%patch9 -p1 -b .CVE-2017-14491-2
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
