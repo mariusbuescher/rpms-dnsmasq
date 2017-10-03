@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.77
-Release:        8%{?extraversion:.%{extraversion}}%{?dist}
+Release:        9%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -32,6 +32,8 @@ Patch7:         dnsmasq-2.77-CVE-2017-14495.patch
 Patch8:         dnsmasq-2.77-misc-cleanups.patch
 Patch9:         dnsmasq-2.77-CVE-2017-14491-2.patch
 Patch10:        dnsmasq-2.77-stdio.h.patch
+Patch11:        dnsmasq-2.77-arcount.patch
+Patch12:        dnsmasq-2.77-underflow.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -76,6 +78,8 @@ query/remove a DHCP server's leases.
 %patch8 -p1 -b .misc-cleanups
 %patch9 -p1 -b .CVE-2017-14491-2
 %patch10 -p1 -b .stdio.h
+%patch11 -p1 -b .arcount
+%patch12 -p1 -b .underflow
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -162,6 +166,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Oct 03 2017 Petr Menšík <pemensik@redhat.com> - 2.77-9
+- More patches related to CVE-2017-14491
+
 * Mon Oct 02 2017 Petr Menšík <pemensik@redhat.com> - 2.77-8
 - Security fix, CVE-2017-14491, DNS heap buffer overflow
 - Security fix, CVE-2017-14492, DHCPv6 RA heap overflow
