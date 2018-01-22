@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.78
-Release:        1%{?extraversion:.%{extraversion}}%{?dist}
+Release:        2%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -24,6 +24,7 @@ Source1:        %{name}.service
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1495409
 Patch1:         dnsmasq-2.77-underflow.patch
+Patch2:         dnsmasq-2.78-CVE-2017-15107.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -59,6 +60,7 @@ query/remove a DHCP server's leases.
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
 %patch1 -p1 -b .underflow
+%patch2 -p1 -b .CVE-2017-15107
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -145,6 +147,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Jan 22 2018 Petr Menšík <pemensik@redhat.com> - 2.78-2
+- DNSSEC fix for wildcard NSEC records (CVE-2017-15107)
+
 * Tue Oct 03 2017 Petr Menšík <pemensik@redhat.com> - 2.78-1
 - Rebase to 2.78
 
