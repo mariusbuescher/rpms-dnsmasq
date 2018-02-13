@@ -26,7 +26,6 @@ Source1:        %{name}.service
 Patch1:         dnsmasq-2.77-underflow.patch
 Patch2:         dnsmasq-2.78-CVE-2017-15107.patch
 
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
