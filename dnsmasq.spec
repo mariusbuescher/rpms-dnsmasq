@@ -114,9 +114,6 @@ mkdir -p %{buildroot}%{_unitdir}
 install -m644 %{SOURCE1} %{buildroot}%{_unitdir}
 rm -rf %{buildroot}%{_initrddir}
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
 %systemd_post dnsmasq.service
 
