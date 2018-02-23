@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.78
-Release:        3%{?extraversion:.%{extraversion}}%{?dist}
+Release:        4%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -21,6 +21,7 @@ License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
 Source1:        %{name}.service
+Source2:        dnsmasq-systemd-sysusers.conf
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1495409
 Patch1:         dnsmasq-2.77-underflow.patch
@@ -31,6 +32,7 @@ BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
 BuildRequires:  libidn2-devel
 BuildRequires:  nettle-devel
+Buildrequires:  gcc
 
 BuildRequires:  systemd
 Requires(post): systemd
@@ -68,6 +70,13 @@ done
 
 # fix the path to the trust anchor
 sed -i 's|%%%%PREFIX%%%%|%{_prefix}|' dnsmasq.conf.example
+
+#set dnsmasq user / group
+sed -i 's|#user=|user=dnsmasq|' dnsmasq.conf.example
+sed -i 's|#group=|group=dnsmasq|' dnsmasq.conf.example
+#set default user /group in src/config.h
+sed -i 's|#define CHUSER "nobody"|#define CHUSER "dnsmasq"|' src/config.h
+sed -i 's|#define CHGRP "dip"|#define CHGRP "dnsmasq"|' src/config.h
 
 # optional parts
 sed -i 's|^COPTS[[:space:]]*=|\0 -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_DNSSEC|' Makefile
@@ -114,8 +123,13 @@ mkdir -p %{buildroot}%{_unitdir}
 install -m644 %{SOURCE1} %{buildroot}%{_unitdir}
 rm -rf %{buildroot}%{_initrddir}
 
+#install systemd sysuser file
+install -Dpm 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/sysusers.d/dnsmasq.conf
+
 %post
 %systemd_post dnsmasq.service
+#https://fedoraproject.org/wiki/Changes/SystemdSysusers
+%sysusers_create
 
 %preun
 %systemd_preun dnsmasq.service
@@ -129,13 +143,15 @@ rm -rf %{buildroot}%{_initrddir}
 %license COPYING COPYING-v3
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
 %dir /etc/dnsmasq.d
-%dir %{_var}/lib/dnsmasq
+%dir %attr(0755, dnsmasq, dnsmasq) %{_var}/lib/dnsmasq
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
 %{_unitdir}/%{name}.service
 %{_sbindir}/dnsmasq
 %{_mandir}/man8/dnsmasq*
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/trust-anchors.conf
+%dir /usr/lib/sysusers.d
+/usr/lib/sysusers.d/dnsmasq.conf
 
 %files utils
 %license COPYING COPYING-v3
@@ -143,6 +159,11 @@ rm -rf %{buildroot}%{_initrddir}
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Feb 22 2018 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.78-4
+- add gcc into buildrequires
+- deliver an extra sysusers.d file to create dnsmasq user/group
+- set CHUSER and CHGRP to dnsmasq in src/config.h
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.78-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
