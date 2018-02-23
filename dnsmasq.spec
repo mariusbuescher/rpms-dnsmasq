@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.78
-Release:        4%{?extraversion:.%{extraversion}}%{?dist}
+Release:        5%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 Group:          System Environment/Daemons
@@ -127,9 +127,9 @@ rm -rf %{buildroot}%{_initrddir}
 install -Dpm 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/sysusers.d/dnsmasq.conf
 
 %post
-%systemd_post dnsmasq.service
 #https://fedoraproject.org/wiki/Changes/SystemdSysusers
 %sysusers_create
+%systemd_post dnsmasq.service
 
 %preun
 %systemd_preun dnsmasq.service
@@ -159,6 +159,9 @@ install -Dpm 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/sysusers.d/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Feb 23 2018 Petr Menšík <pemensik@redhat.com> - 2.78-5
+- Create user first and then restart service
+
 * Thu Feb 22 2018 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 2.78-4
 - add gcc into buildrequires
 - deliver an extra sysusers.d file to create dnsmasq user/group
