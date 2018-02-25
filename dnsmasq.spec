@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.78
-Release:        5%{?extraversion:.%{extraversion}}%{?dist}
+Release:        6%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -121,6 +121,10 @@ rm -rf %{buildroot}%{_initrddir}
 #install systemd sysuser file
 install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 
+%pre
+#precreate users so that rpm can install files owned by that user
+%sysusers_create_inline '%(cat %{SOURCE2})'
+
 %post
 #https://fedoraproject.org/wiki/Changes/SystemdSysusers
 %sysusers_create
@@ -153,6 +157,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Sun Feb 25 2018 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 2.78-6
+- Create user before installing files (#1548050)
+
 * Fri Feb 23 2018 Petr Menšík <pemensik@redhat.com> - 2.78-5
 - Create user first and then restart service
 
