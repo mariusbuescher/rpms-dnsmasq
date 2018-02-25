@@ -16,7 +16,6 @@ Version:        2.78
 Release:        5%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
-Group:          System Environment/Daemons
 License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
@@ -35,9 +34,7 @@ BuildRequires:  nettle-devel
 Buildrequires:  gcc
 
 BuildRequires:  systemd
-Requires(post): systemd
-Requires(preun): systemd
-Requires(postun): systemd
+%{?systemd_requires}
 
 %description
 Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server.
@@ -51,11 +48,10 @@ machines.
 
 %package        utils
 Summary:        Utilities for manipulating DHCP server leases
-Group:          System Environment/Daemons
 
 %description    utils
-Utilities that use the standard DHCP protocol to
-query/remove a DHCP server's leases.
+Utilities that use the standard DHCP protocol to query/remove a DHCP
+server's leases.
 
 
 %prep
@@ -90,12 +86,11 @@ EOF
 
 
 %build
-make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
-make -C contrib/lease-tools %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
+%make_build CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
+%make_build -C contrib/lease-tools CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
 # normally i'd do 'make install'...it's a bit messy, though
 mkdir -p $RPM_BUILD_ROOT%{_sbindir} \
         $RPM_BUILD_ROOT%{_mandir}/man8 \
@@ -124,7 +119,7 @@ install -m644 %{SOURCE1} %{buildroot}%{_unitdir}
 rm -rf %{buildroot}%{_initrddir}
 
 #install systemd sysuser file
-install -Dpm 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/sysusers.d/dnsmasq.conf
+install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 
 %post
 #https://fedoraproject.org/wiki/Changes/SystemdSysusers
@@ -138,7 +133,6 @@ install -Dpm 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/sysusers.d/dnsmasq.conf
 %systemd_postun_with_restart dnsmasq.service
 
 %files
-%defattr(-,root,root,-)
 %doc CHANGELOG FAQ doc.html setup.html dbus/DBus-interface
 %license COPYING COPYING-v3
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
@@ -151,7 +145,7 @@ install -Dpm 644 %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/sysusers.d/dnsmasq.conf
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/trust-anchors.conf
 %dir /usr/lib/sysusers.d
-/usr/lib/sysusers.d/dnsmasq.conf
+%{_sysusersdir}/dnsmasq.conf
 
 %files utils
 %license COPYING COPYING-v3
