@@ -1,0 +1,47 @@
+From c7d5a6a968fa2bd7412c913adf274aaa7174303a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20Men=C5=A1=C3=ADk?= <pemensik@redhat.com>
+Date: Fri, 2 Mar 2018 13:17:04 +0100
+Subject: [PATCH] Print warning on FIPS machine with dnssec enabled. Dnsmasq
+ has no proper FIPS 140-2 compliant implementation.
+
+---
+ src/dnsmasq.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index 771bec1..1cb69b7 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -182,6 +182,7 @@ int main (int argc, char **argv)
+       
+       if (daemon->cachesize < CACHESIZ)
+ 	die(_("cannot reduce cache size from default when DNSSEC enabled"), NULL, EC_BADCONF);
++           
+ #else 
+       die(_("DNSSEC not available: set HAVE_DNSSEC in src/config.h"), NULL, EC_BADCONF);
+ #endif
+@@ -741,6 +742,7 @@ int main (int argc, char **argv)
+   if (option_bool(OPT_DNSSEC_VALID))
+     {
+       int rc;
++      int fips;
+ 
+       /* Delay creating the timestamp file until here, after we've changed user, so that
+ 	 it has the correct owner to allow updating the mtime later. 
+@@ -752,6 +754,13 @@ int main (int argc, char **argv)
+ 	}
+       
+       my_syslog(LOG_INFO, _("DNSSEC validation enabled"));
++
++      fips = open("/etc/system-fips", O_RDONLY);
++      if (fips != -1)
++        {
++          close(fips);
++    	  my_syslog(LOG_WARNING, _("DNSSEC support is not FIPS 140-2 compliant")); 
++        }
+       
+       daemon->dnssec_no_time_check = option_bool(OPT_DNSSEC_TIME);
+       if (option_bool(OPT_DNSSEC_TIME) && !daemon->back_to_the_future)
+-- 
+2.14.3
+

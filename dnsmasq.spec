@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.78
-Release:        6%{?extraversion:.%{extraversion}}%{?dist}
+Release:        7%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -25,6 +25,7 @@ Source2:        dnsmasq-systemd-sysusers.conf
 # https://bugzilla.redhat.com/show_bug.cgi?id=1495409
 Patch1:         dnsmasq-2.77-underflow.patch
 Patch2:         dnsmasq-2.78-CVE-2017-15107.patch
+Patch3:         dnsmasq-2.78-fips.patch
 
 
 BuildRequires:  dbus-devel
@@ -58,6 +59,7 @@ server's leases.
 %setup -q -n %{name}-%{version}%{?extraversion}
 %patch1 -p1 -b .underflow
 %patch2 -p1 -b .CVE-2017-15107
+%patch3 -p1 -b .fips
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -157,6 +159,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Mar 02 2018 Petr Menšík <pemensik@redhat.com> - 2.78-7
+- Emit warning with dnssec enabled on FIPS system (#1549507)
+
 * Sun Feb 25 2018 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 2.78-6
 - Create user before installing files (#1548050)
 
