@@ -26,6 +26,9 @@ Source2:        dnsmasq-systemd-sysusers.conf
 Patch1:         dnsmasq-2.77-underflow.patch
 Patch3:         dnsmasq-2.78-fips.patch
 
+# This is workaround to nettle bug #1549190
+# https://bugzilla.redhat.com/show_bug.cgi?id=1549190
+Requires:       nettle >= 3.4
 
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
@@ -161,6 +164,7 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 - Rebase to 2.79
 - Stop using nettle_hashes directly, use access function (#1548060)
 - Do not break on cname with spaces (#1498667)
+- Require nettle 3.4+
 
 * Fri Mar 02 2018 Petr Menšík <pemensik@redhat.com> - 2.78-7
 - Emit warning with dnssec enabled on FIPS system (#1549507)
