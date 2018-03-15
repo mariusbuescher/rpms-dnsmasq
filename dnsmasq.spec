@@ -12,8 +12,8 @@
 %define _hardened_build 1
 
 Name:           dnsmasq
-Version:        2.78
-Release:        7%{?extraversion:.%{extraversion}}%{?dist}
+Version:        2.79
+Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -24,7 +24,6 @@ Source2:        dnsmasq-systemd-sysusers.conf
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1495409
 Patch1:         dnsmasq-2.77-underflow.patch
-Patch2:         dnsmasq-2.78-CVE-2017-15107.patch
 Patch3:         dnsmasq-2.78-fips.patch
 
 
@@ -58,7 +57,6 @@ server's leases.
 %prep
 %setup -q -n %{name}-%{version}%{?extraversion}
 %patch1 -p1 -b .underflow
-%patch2 -p1 -b .CVE-2017-15107
 %patch3 -p1 -b .fips
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
@@ -159,6 +157,11 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Mar 15 2018 Petr Menšík <pemensik@redhat.com> - 2.79-1
+- Rebase to 2.79
+- Stop using nettle_hashes directly, use access function (#1548060)
+- Do not break on cname with spaces (#1498667)
+
 * Fri Mar 02 2018 Petr Menšík <pemensik@redhat.com> - 2.78-7
 - Emit warning with dnssec enabled on FIPS system (#1549507)
 
