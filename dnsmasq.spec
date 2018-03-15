@@ -151,7 +151,6 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man8/dnsmasq*
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/trust-anchors.conf
-%dir /usr/lib/sysusers.d
 %{_sysusersdir}/dnsmasq.conf
 
 %files utils
@@ -165,6 +164,7 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 - Stop using nettle_hashes directly, use access function (#1548060)
 - Do not break on cname with spaces (#1498667)
 - Require nettle 3.4+
+- Do not own sysusers.d directory, already depends on systemd providing it
 
 * Fri Mar 02 2018 Petr Menšík <pemensik@redhat.com> - 2.78-7
 - Emit warning with dnssec enabled on FIPS system (#1549507)
