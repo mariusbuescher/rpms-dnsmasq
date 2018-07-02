@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.79
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Release:        3%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -144,10 +144,12 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %files
 %doc CHANGELOG FAQ doc.html setup.html dbus/DBus-interface
 %license COPYING COPYING-v3
-%config(noreplace) %attr(644,root,root) %{_sysconfdir}/dnsmasq.conf
-%dir /etc/dnsmasq.d
-%dir %attr(0755, dnsmasq, dnsmasq) %{_var}/lib/dnsmasq
-%config(noreplace) %attr(644,root,root) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
+%defattr(0644,root,dnsmasq,0755)
+%config(noreplace) %{_sysconfdir}/dnsmasq.conf
+%dir %{_sysconfdir}/dnsmasq.d
+%dir %{_var}/lib/dnsmasq
+%defattr(-,root,root,-)
+%config(noreplace) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
 %{_unitdir}/%{name}.service
 %{_sbindir}/dnsmasq
 %{_mandir}/man8/dnsmasq*
@@ -161,6 +163,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Jul 02 2018 Petr Menšík <pemensik@redhat.com> - 2.79-3
+- Make dnsmasq leases writeable by root again (#1554390)
+
 * Mon Jul 02 2018 Petr Menšík <pemensik@redhat.com> - 2.79-2
 - Fix passing of dnssec enabled queries (#1597309)
 
