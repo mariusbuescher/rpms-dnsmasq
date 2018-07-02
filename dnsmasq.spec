@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.79
-Release:        1%{?extraversion:.%{extraversion}}%{?dist}
+Release:        2%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -25,6 +25,7 @@ Source2:        dnsmasq-systemd-sysusers.conf
 # https://bugzilla.redhat.com/show_bug.cgi?id=1495409
 Patch1:         dnsmasq-2.77-underflow.patch
 Patch3:         dnsmasq-2.78-fips.patch
+Patch4:         dnsmasq-2.80-dnssec.patch
 
 # This is workaround to nettle bug #1549190
 # https://bugzilla.redhat.com/show_bug.cgi?id=1549190
@@ -61,6 +62,7 @@ server's leases.
 %setup -q -n %{name}-%{version}%{?extraversion}
 %patch1 -p1 -b .underflow
 %patch3 -p1 -b .fips
+%patch4 -p1 -b .dnssec
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -159,6 +161,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Jul 02 2018 Petr Menšík <pemensik@redhat.com> - 2.79-2
+- Fix passing of dnssec enabled queries (#1597309)
+
 * Thu Mar 15 2018 Petr Menšík <pemensik@redhat.com> - 2.79-1
 - Rebase to 2.79
 - Stop using nettle_hashes directly, use access function (#1548060)
