@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.79
-Release:        3%{?extraversion:.%{extraversion}}%{?dist}
+Release:        4%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -163,6 +163,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.79-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Mon Jul 02 2018 Petr Menšík <pemensik@redhat.com> - 2.79-3
 - Make dnsmasq leases writeable by root again (#1554390)
 
