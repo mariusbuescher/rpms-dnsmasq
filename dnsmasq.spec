@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.79
-Release:        6%{?extraversion:.%{extraversion}}%{?dist}
+Release:        7%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -163,6 +163,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Jul 31 2018 Florian Weimer <fweimer@redhat.com> - 2.79-7
+- Rebuild with fixed binutils
+
 * Fri Jul 27 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 2.79-6
 - Rebuild for new binutils
 
