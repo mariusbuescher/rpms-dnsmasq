@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.79
-Release:        7%{?extraversion:.%{extraversion}}%{?dist}
+Release:        8%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -26,6 +26,7 @@ Source2:        dnsmasq-systemd-sysusers.conf
 Patch1:         dnsmasq-2.77-underflow.patch
 Patch3:         dnsmasq-2.78-fips.patch
 Patch4:         dnsmasq-2.80-dnssec.patch
+Patch5: dnsmasq-2.79-randomize-ports.patch
 
 # This is workaround to nettle bug #1549190
 # https://bugzilla.redhat.com/show_bug.cgi?id=1549190
@@ -63,6 +64,7 @@ server's leases.
 %patch1 -p1 -b .underflow
 %patch3 -p1 -b .fips
 %patch4 -p1 -b .dnssec
+%patch5 -p1 -b .ports
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -163,6 +165,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Aug 09 2018 Petr Menšík <pemensik@redhat.com> - 2.79-8
+- Better randomize ports
+
 * Tue Jul 31 2018 Florian Weimer <fweimer@redhat.com> - 2.79-7
 - Rebuild with fixed binutils
 
