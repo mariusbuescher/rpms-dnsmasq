@@ -1,4 +1,4 @@
-From 89f57e39b69f92beacb6bad9c68d61f9c4fb0e77 Mon Sep 17 00:00:00 2001
+From 7b1cce1d0bdb61c09946978d4bdeb05a3cd4202a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Petr=20Men=C5=A1=C3=ADk?= <pemensik@redhat.com>
 Date: Fri, 2 Mar 2018 13:17:04 +0100
 Subject: [PATCH] Print warning on FIPS machine with dnssec enabled. Dnsmasq
@@ -9,7 +9,7 @@ Subject: [PATCH] Print warning on FIPS machine with dnssec enabled. Dnsmasq
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/src/dnsmasq.c b/src/dnsmasq.c
-index ce44809..9f6c020 100644
+index 480c5f9..5fd229e 100644
 --- a/src/dnsmasq.c
 +++ b/src/dnsmasq.c
 @@ -187,6 +187,7 @@ int main (int argc, char **argv)
@@ -20,10 +20,10 @@ index ce44809..9f6c020 100644
  #else 
        die(_("DNSSEC not available: set HAVE_DNSSEC in src/config.h"), NULL, EC_BADCONF);
  #endif
-@@ -769,7 +770,10 @@ int main (int argc, char **argv)
- 	}
-       
-       my_syslog(LOG_INFO, _("DNSSEC validation enabled"));
+@@ -786,7 +787,10 @@ int main (int argc, char **argv)
+ 	my_syslog(LOG_INFO, _("DNSSEC validation enabled but all unsigned answers are trusted"));
+       else
+ 	my_syslog(LOG_INFO, _("DNSSEC validation enabled"));
 -      
 +
 +      if (access("/etc/system-fips", F_OK) == 0)

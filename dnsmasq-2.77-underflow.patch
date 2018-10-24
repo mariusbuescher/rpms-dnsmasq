@@ -1,4 +1,4 @@
-From c82a594d95431e8615126621397ea595eb037a6b Mon Sep 17 00:00:00 2001
+From 0ef799244732871e043d848f2f845c797f5a0745 Mon Sep 17 00:00:00 2001
 From: Doran Moppert <dmoppert@redhat.com>
 Date: Tue, 26 Sep 2017 14:48:20 +0930
 Subject: [PATCH] google patch hand-applied
@@ -31,10 +31,10 @@ index af33877..ba6ff0c 100644
  	  free(buff);
  	  p += rdlen;
 diff --git a/src/forward.c b/src/forward.c
-index cdd11d3..3078f64 100644
+index 3dd8633..64af66f 100644
 --- a/src/forward.c
 +++ b/src/forward.c
-@@ -1438,6 +1438,10 @@ void receive_query(struct listener *listen, time_t now)
+@@ -1577,6 +1577,10 @@ void receive_query(struct listener *listen, time_t now)
  	udp_size = PACKETSZ; /* Sanity check - can't reduce below default. RFC 6891 6.2.3 */
      }
  
@@ -46,18 +46,18 @@ index cdd11d3..3078f64 100644
    if (auth_dns)
      {
 diff --git a/src/rfc1035.c b/src/rfc1035.c
-index b078b59..777911b 100644
+index 6290f22..a943ecb 100644
 --- a/src/rfc1035.c
 +++ b/src/rfc1035.c
-@@ -1281,6 +1281,8 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
+@@ -1292,6 +1292,8 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
    int nxdomain = 0, auth = 1, trunc = 0, sec_data = 1;
    struct mx_srv_record *rec;
    size_t len;
 +  // Make sure we do not underflow here too.
 +  if (qlen > (limit - ((char *)header))) return 0;
  
-   if (ntohs(header->ancount) != 0 ||
-       ntohs(header->nscount) != 0 ||
+   /* never answer queries with RD unset, to avoid cache snooping. */
+   if (!(header->hb3 & HB3_RD) ||
 -- 
-2.14.3
+2.14.4
 

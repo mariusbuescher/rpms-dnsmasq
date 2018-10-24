@@ -1,4 +1,4 @@
-From 6899c5c5b9a32aa2ce0513b5e69356844988c64e Mon Sep 17 00:00:00 2001
+From 8455bcbe5311ee0d15bcebe494580fec8868a93a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Petr=20Men=C5=A1=C3=ADk?= <pemensik@redhat.com>
 Date: Thu, 9 Aug 2018 18:17:26 +0200
 Subject: [PATCH] Use OS random ports by default
@@ -13,20 +13,20 @@ separately. Would use port according to system policy.
  3 files changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/src/dnsmasq.c b/src/dnsmasq.c
-index 9f6c020..4cd478e 100644
+index ac5d8aa..6d51d3b 100644
 --- a/src/dnsmasq.c
 +++ b/src/dnsmasq.c
-@@ -226,7 +226,7 @@ int main (int argc, char **argv)
-     die(_("loop detection not available: set HAVE_LOOP in src/config.h"), NULL, EC_BADCONF);
+@@ -230,7 +230,7 @@ int main (int argc, char **argv)
+     die(_("Ubus not available: set HAVE_UBUS in src/config.h"), NULL, EC_BADCONF);
  #endif
- 
+   
 -  if (daemon->max_port < daemon->min_port)
 +  if (daemon->max_port >= 0 && daemon->max_port < daemon->min_port)
      die(_("max_port cannot be smaller than min_port"), NULL, EC_BADCONF);
  
    now = dnsmasq_time();
 diff --git a/src/network.c b/src/network.c
-index 0381513..9747d26 100644
+index 8ae7a70..58a2819 100644
 --- a/src/network.c
 +++ b/src/network.c
 @@ -1138,18 +1138,27 @@ int random_sock(int family)
@@ -61,10 +61,10 @@ index 0381513..9747d26 100644
  	    if (family == AF_INET) 
  	      {
 diff --git a/src/option.c b/src/option.c
-index d358d99..b7eaff0 100644
+index 7ccbdea..477dd52 100644
 --- a/src/option.c
 +++ b/src/option.c
-@@ -2602,6 +2602,8 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+@@ -2619,6 +2619,8 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
      case LOPT_MINPORT:  /* --min-port */
        if (!atoi_check16(arg, &daemon->min_port))
  	ret_err(gen_err);
@@ -73,7 +73,7 @@ index d358d99..b7eaff0 100644
        break;
  
      case LOPT_MAXPORT:  /* --max-port */
-@@ -4678,7 +4680,7 @@ void read_opts(int argc, char **argv, char *compile_opts)
+@@ -4754,7 +4756,7 @@ void read_opts(int argc, char **argv, char *compile_opts)
    daemon->soa_refresh = SOA_REFRESH;
    daemon->soa_retry = SOA_RETRY;
    daemon->soa_expiry = SOA_EXPIRY;
