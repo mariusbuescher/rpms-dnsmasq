@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.80
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Release:        3%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -59,10 +59,7 @@ server's leases.
 
 
 %prep
-%setup -q -n %{name}-%{version}%{?extraversion}
-%patch1 -p1 -b .underflow
-%patch3 -p1 -b .fips
-%patch5 -p1 -b .ports
+%autosetup -n %{name}-%{version}%{?extraversion}
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
@@ -163,6 +160,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/dnsmasq.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Feb 15 2019 Petr Menšík <pemensik@redhat.com> - 2.80-3
+- Apply patches by autosetup
+
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.80-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
