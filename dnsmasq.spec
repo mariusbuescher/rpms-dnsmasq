@@ -59,7 +59,7 @@ server's leases.
 
 
 %prep
-%autosetup -n %{name}-%{version}%{?extraversion}
+%autosetup -p1 -n %{name}-%{version}%{?extraversion}
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
