@@ -1,0 +1,31 @@
+From 162e5e0062ce923c494cc64282f293f0ed64fc10 Mon Sep 17 00:00:00 2001
+From: Sven Mueller <smu@google.com>
+Date: Wed, 27 Feb 2019 21:17:37 +0000
+Subject: [PATCH] Fix bug added in 2.80 non-terminal code which returns NODATA
+ instead of NXDOMAIN.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Thanks to Sven Muleller and Maciej Żenczykowski for work on this.
+
+https://bugzilla.redhat.com/show_bug.cgi?id=1674067 refers.
+---
+ src/cache.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/cache.c b/src/cache.c
+index 906f5e1..44c13e4 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -790,6 +790,7 @@ int cache_find_non_terminal(char *name, time_t now)
+     if (!is_outdated_cname_pointer(crecp) &&
+ 	!is_expired(now, crecp) &&
+ 	(crecp->flags & F_FORWARD) &&
++	!(crecp->flags & F_NXDOMAIN) && 
+ 	hostname_isequal(name, cache_get_name(crecp)))
+       return 1;
+ 
+-- 
+2.20.1
+

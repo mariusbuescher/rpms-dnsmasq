@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.80
-Release:        5%{?extraversion:.%{extraversion}}%{?dist}
+Release:        6%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -26,6 +26,8 @@ Source2:        dnsmasq-systemd-sysusers.conf
 Patch1:         dnsmasq-2.77-underflow.patch
 Patch3:         dnsmasq-2.78-fips.patch
 Patch5:         dnsmasq-2.79-randomize-ports.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1674067
+Patch6:         dnsmasq-2.80-rh1674067.patch
 
 # This is workaround to nettle bug #1549190
 # https://bugzilla.redhat.com/show_bug.cgi?id=1549190
@@ -158,6 +160,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Jul 24 2019 Petr Menšík <pemensik@redhat.com> - 2.80-6
+- Do not return NXDOMAIN on empty non-terminals (#1674067)
+
 * Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.80-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
