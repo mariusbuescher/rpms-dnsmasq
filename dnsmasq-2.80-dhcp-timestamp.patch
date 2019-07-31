@@ -1,0 +1,100 @@
+From 21c540903974d39dbe0e0eefe26143e93f52d58e Mon Sep 17 00:00:00 2001
+From: Petr Mensik <pemensik@redhat.com>
+Date: Wed, 31 Jul 2019 20:35:35 +0200
+Subject: [PATCH] Add support for SO_TIMESTAMP
+
+Recent kernel no longer supports SIOCGSTAMP. Make it compile without its
+support. Use SO_TIMESTAMP message, since already obtained for interface
+index.
+---
+ src/dhcp.c | 54 ++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 36 insertions(+), 18 deletions(-)
+
+diff --git a/src/dhcp.c b/src/dhcp.c
+index f8d323b..fd8ffc3 100644
+--- a/src/dhcp.c
++++ b/src/dhcp.c
+@@ -61,6 +61,9 @@ static int make_fd(int port)
+ #endif
+ #if defined(HAVE_LINUX_NETWORK)
+       setsockopt(fd, IPPROTO_IP, IP_PKTINFO, &oneopt, sizeof(oneopt)) == -1 ||
++#  ifdef SO_TIMESTAMP
++      setsockopt(fd, SOL_SOCKET, SO_TIMESTAMP, &oneopt, sizeof(oneopt)) == -1 ||
++#  endif
+ #else
+       setsockopt(fd, IPPROTO_IP, IP_RECVIF, &oneopt, sizeof(oneopt)) == -1 ||
+ #endif
+@@ -152,13 +155,13 @@ void dhcp_packet(time_t now, int pxe_fd)
+   time_t recvtime = now;
+ #ifdef HAVE_LINUX_NETWORK
+   struct arpreq arp_req;
+-  struct timeval tv;
++  struct timeval tv = {0, };
+ #endif
+   
+   union {
+     struct cmsghdr align; /* this ensures alignment */
+ #if defined(HAVE_LINUX_NETWORK)
+-    char control[CMSG_SPACE(sizeof(struct in_pktinfo))];
++    char control[CMSG_SPACE(sizeof(struct in_pktinfo)+sizeof(struct timeval))];
+ #elif defined(HAVE_SOLARIS_NETWORK)
+     char control[CMSG_SPACE(sizeof(unsigned int))];
+ #elif defined(HAVE_BSD_NETWORK) 
+@@ -178,23 +181,38 @@ void dhcp_packet(time_t now, int pxe_fd)
+       (sz < (ssize_t)(sizeof(*mess) - sizeof(mess->options)))) 
+     return;
+     
+-  #if defined (HAVE_LINUX_NETWORK)
+-  if (ioctl(fd, SIOCGSTAMP, &tv) == 0)
+-    recvtime = tv.tv_sec;
+-
++#if defined (HAVE_LINUX_NETWORK)
+   if (msg.msg_controllen >= sizeof(struct cmsghdr))
+-    for (cmptr = CMSG_FIRSTHDR(&msg); cmptr; cmptr = CMSG_NXTHDR(&msg, cmptr))
+-      if (cmptr->cmsg_level == IPPROTO_IP && cmptr->cmsg_type == IP_PKTINFO)
+-	{
+-	  union {
+-	    unsigned char *c;
+-	    struct in_pktinfo *p;
+-	  } p;
+-	  p.c = CMSG_DATA(cmptr);
+-	  iface_index = p.p->ipi_ifindex;
+-	  if (p.p->ipi_addr.s_addr != INADDR_BROADCAST)
+-	    unicast_dest = 1;
+-	}
++    {
++      for (cmptr = CMSG_FIRSTHDR(&msg); cmptr; cmptr = CMSG_NXTHDR(&msg, cmptr))
++        if (cmptr->cmsg_level == IPPROTO_IP && cmptr->cmsg_type == IP_PKTINFO)
++	  {
++	    union {
++	      unsigned char *c;
++	      struct in_pktinfo *p;
++	    } p;
++	    p.c = CMSG_DATA(cmptr);
++	    iface_index = p.p->ipi_ifindex;
++	    if (p.p->ipi_addr.s_addr != INADDR_BROADCAST)
++	      unicast_dest = 1;
++	  }
++#ifdef SO_TIMESTAMP
++	else if (cmptr->cmsg_level == SOL_SOCKET && cmptr->cmsg_type == SO_TIMESTAMP)
++	  {
++	    union {
++	      unsigned char *c;
++	      struct timeval *tv;
++	    } p;
++	    p.c = CMSG_DATA(cmptr);
++	    recvtime = tv.tv_sec = p.tv->tv_sec;
++	  }
++#endif
++    }
++
++#ifdef SIOCGSTAMP
++  if (tv.tv_sec == 0 && ioctl(fd, SIOCGSTAMP, &tv) == 0)
++    recvtime = tv.tv_sec;
++#endif
+ 
+ #elif defined(HAVE_BSD_NETWORK) 
+   if (msg.msg_controllen >= sizeof(struct cmsghdr))
+-- 
+2.20.1
+

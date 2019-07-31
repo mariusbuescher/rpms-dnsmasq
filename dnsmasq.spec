@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.80
-Release:        7%{?extraversion:.%{extraversion}}%{?dist}
+Release:        8%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -30,6 +30,9 @@ Patch5:         dnsmasq-2.79-randomize-ports.patch
 Patch6:         dnsmasq-2.80-rh1674067.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1728701
 Patch7:         dnsmasq-2.80-rh1728701.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1735096
+Patch8:         dnsmasq-2.80-nettle.patch
+Patch9:         dnsmasq-2.80-dhcp-timestamp.patch
 
 # This is workaround to nettle bug #1549190
 # https://bugzilla.redhat.com/show_bug.cgi?id=1549190
@@ -162,6 +165,10 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Jul 31 2019 Petr Menšík <pemensik@redhat.com> - 2.80-8
+- Compile with nettle 3.5
+- Support missing SIOCGSTAMP ioctl
+
 * Wed Jul 31 2019 Petr Menšík <pemensik@redhat.com> - 2.80-7
 - Fix TCP listener after interface recreated (#1728701)
 
