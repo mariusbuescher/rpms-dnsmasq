@@ -1,0 +1,536 @@
+From f6ae1b90158ce1c4fa7ff803bd94e072c789497c Mon Sep 17 00:00:00 2001
+From: Petr Mensik <pemensik@redhat.com>
+Date: Wed, 31 Jul 2019 17:23:45 +0200
+Subject: [PATCH] Fix TCP listener after interface is recreated
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Squashed commit of the following:
+
+commit 023433cad60a47bf83037cd8f8d403d1086163e0
+Author: Petr Menšík <pemensik@redhat.com>
+Date:   Mon Jul 15 17:16:44 2019 +0200
+
+    Remove duplicate address family from listener
+
+    Since address already contain family, remove separate family from
+    listener. Use now family from address itself.
+
+commit d9b9235139b15a953ba9220e1d33a62d853f4e73
+Author: Petr Menšík <pemensik@redhat.com>
+Date:   Mon Jul 15 17:13:12 2019 +0200
+
+    Handle listening on duplicate addresses
+
+    Save listening address into listener. Use it to find existing listeners
+    before creating new one. If it exist, increase just used counter.
+    Release only listeners not already used.
+
+    Duplicates family in listener.
+
+commit a9836313966ecb0689c52bbc4ddbc7a78f7bb677
+Author: Petr Mensik <pemensik@redhat.com>
+Date:   Tue Jul 9 14:05:59 2019 +0200
+
+    Cleanup interfaces no longer available
+
+    Clean addresses and interfaces not found after enumerate. Free unused
+    records to speed up checking active interfaces and reduce used memory.
+
+commit 1474c5146b6278fc61df385a8e08b23ccc11b1ab
+Author: Petr Mensik <pemensik@redhat.com>
+Date:   Wed Jul 3 17:02:16 2019 +0200
+
+    Compare address and interface index for allowed interface
+
+    If interface is recreated with the same address but different index, it
+    would not change any other parameter.
+
+    Test also address family on incoming TCP queries.
+
+commit 94b2f5d33e043652a00b8c70e573994925cd26fe
+Author: Petr Mensik <pemensik@redhat.com>
+Date:   Thu Jul 4 20:28:08 2019 +0200
+
+    Log listening on new interfaces
+
+    Log in debug mode listening on interfaces. They can be dynamically
+    found, include interface number, since it is checked on TCP connections.
+    Print also addresses found on them.
+---
+ src/dnsmasq.c |   3 +-
+ src/dnsmasq.h |   3 +-
+ src/forward.c |  27 +++++-----
+ src/network.c | 147 +++++++++++++++++++++++++++++++++++++++++---------
+ src/tftp.c    |  29 +++++-----
+ 5 files changed, 155 insertions(+), 54 deletions(-)
+
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index 3dc7c27..12e3621 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -1708,7 +1708,8 @@ static void check_dns_listeners(time_t now)
+ #endif
+ 		  
+ 		  for (iface = daemon->interfaces; iface; iface = iface->next)
+-		    if (iface->index == if_index)
++		    if (iface->index == if_index &&
++		        iface->addr.sa.sa_family == tcp_addr.sa.sa_family)
+ 		      break;
+ 		  
+ 		  if (!iface && !loopback_exception(listener->tcpfd, tcp_addr.sa.sa_family, &addr, intr_name))
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index f53e9a5..8d84714 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -567,7 +567,8 @@ struct irec {
+ };
+ 
+ struct listener {
+-  int fd, tcpfd, tftpfd, family;
++  int fd, tcpfd, tftpfd, used;
++  union mysockaddr addr;
+   struct irec *iface; /* only sometimes valid for non-wildcard */
+   struct listener *next;
+ };
+diff --git a/src/forward.c b/src/forward.c
+index 64af66f..a883fb7 100644
+--- a/src/forward.c
++++ b/src/forward.c
+@@ -1304,8 +1304,9 @@ void receive_query(struct listener *listen, time_t now)
+ #endif
+   } control_u;
+ #ifdef HAVE_IPV6
++  int family = listen->addr.sa.sa_family;
+    /* Can always get recvd interface for IPv6 */
+-  int check_dst = !option_bool(OPT_NOWILD) || listen->family == AF_INET6;
++  int check_dst = !option_bool(OPT_NOWILD) || family == AF_INET6;
+ #else
+   int check_dst = !option_bool(OPT_NOWILD);
+ #endif
+@@ -1320,7 +1321,7 @@ void receive_query(struct listener *listen, time_t now)
+     {
+       auth_dns = listen->iface->dns_auth;
+      
+-      if (listen->family == AF_INET)
++      if (family == AF_INET)
+ 	{
+ 	  dst_addr_4 = dst_addr.addr.addr4 = listen->iface->addr.in.sin_addr;
+ 	  netmask = listen->iface->netmask;
+@@ -1350,9 +1351,9 @@ void receive_query(struct listener *listen, time_t now)
+      information disclosure. */
+   memset(daemon->packet + n, 0, daemon->edns_pktsz - n);
+   
+-  source_addr.sa.sa_family = listen->family;
++  source_addr.sa.sa_family = family;
+   
+-  if (listen->family == AF_INET)
++  if (family == AF_INET)
+     {
+        /* Source-port == 0 is an error, we can't send back to that. 
+ 	  http://www.ietf.org/mail-archive/web/dnsop/current/msg11441.html */
+@@ -1374,7 +1375,7 @@ void receive_query(struct listener *listen, time_t now)
+     {
+       struct addrlist *addr;
+ #ifdef HAVE_IPV6
+-      if (listen->family == AF_INET6) 
++      if (family == AF_INET6) 
+ 	{
+ 	  for (addr = daemon->interface_addrs; addr; addr = addr->next)
+ 	    if ((addr->flags & ADDRLIST_IPV6) &&
+@@ -1413,7 +1414,7 @@ void receive_query(struct listener *listen, time_t now)
+ 	return;
+ 
+ #if defined(HAVE_LINUX_NETWORK)
+-      if (listen->family == AF_INET)
++      if (family == AF_INET)
+ 	for (cmptr = CMSG_FIRSTHDR(&msg); cmptr; cmptr = CMSG_NXTHDR(&msg, cmptr))
+ 	  if (cmptr->cmsg_level == IPPROTO_IP && cmptr->cmsg_type == IP_PKTINFO)
+ 	    {
+@@ -1426,7 +1427,7 @@ void receive_query(struct listener *listen, time_t now)
+ 	      if_index = p.p->ipi_ifindex;
+ 	    }
+ #elif defined(IP_RECVDSTADDR) && defined(IP_RECVIF)
+-      if (listen->family == AF_INET)
++      if (family == AF_INET)
+ 	{
+ 	  for (cmptr = CMSG_FIRSTHDR(&msg); cmptr; cmptr = CMSG_NXTHDR(&msg, cmptr))
+ 	    {
+@@ -1452,7 +1453,7 @@ void receive_query(struct listener *listen, time_t now)
+ #endif
+       
+ #ifdef HAVE_IPV6
+-      if (listen->family == AF_INET6)
++      if (family == AF_INET6)
+ 	{
+ 	  for (cmptr = CMSG_FIRSTHDR(&msg); cmptr; cmptr = CMSG_NXTHDR(&msg, cmptr))
+ 	    if (cmptr->cmsg_level == IPPROTO_IPV6 && cmptr->cmsg_type == daemon->v6pktinfo)
+@@ -1474,16 +1475,16 @@ void receive_query(struct listener *listen, time_t now)
+       if (!indextoname(listen->fd, if_index, ifr.ifr_name))
+ 	return;
+       
+-      if (!iface_check(listen->family, &dst_addr, ifr.ifr_name, &auth_dns))
++      if (!iface_check(family, &dst_addr, ifr.ifr_name, &auth_dns))
+ 	{
+ 	   if (!option_bool(OPT_CLEVERBIND))
+ 	     enumerate_interfaces(0); 
+-	   if (!loopback_exception(listen->fd, listen->family, &dst_addr, ifr.ifr_name) &&
+-	       !label_exception(if_index, listen->family, &dst_addr))
++	   if (!loopback_exception(listen->fd, family, &dst_addr, ifr.ifr_name) &&
++	       !label_exception(if_index, family, &dst_addr))
+ 	     return;
+ 	}
+ 
+-      if (listen->family == AF_INET && option_bool(OPT_LOCALISE))
++      if (family == AF_INET && option_bool(OPT_LOCALISE))
+ 	{
+ 	  struct irec *iface;
+ 	  
+@@ -1528,7 +1529,7 @@ void receive_query(struct listener *listen, time_t now)
+ #endif
+       char *types = querystr(auth_dns ? "auth" : "query", type);
+       
+-      if (listen->family == AF_INET) 
++      if (family == AF_INET) 
+ 	log_query(F_QUERY | F_IPV4 | F_FORWARD, daemon->namebuff, 
+ 		  (struct all_addr *)&source_addr.in.sin_addr, types);
+ #ifdef HAVE_IPV6
+diff --git a/src/network.c b/src/network.c
+index 58a2819..979c223 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -404,10 +404,11 @@ static int iface_allowed(struct iface_param *param, int if_index, char *label,
+   /* check whether the interface IP has been added already 
+      we call this routine multiple times. */
+   for (iface = daemon->interfaces; iface; iface = iface->next) 
+-    if (sockaddr_isequal(&iface->addr, addr))
++    if (sockaddr_isequal(&iface->addr, addr) && iface->index == if_index)
+       {
+ 	iface->dad = !!(iface_flags & IFACE_TENTATIVE);
+ 	iface->found = 1; /* for garbage collection */
++	iface->netmask = netmask;
+ 	return 1;
+       }
+ 
+@@ -552,7 +553,82 @@ static int iface_allowed_v4(struct in_addr local, int if_index, char *label,
+ 
+   return iface_allowed((struct iface_param *)vparam, if_index, label, &addr, netmask, prefix, 0);
+ }
+-   
++
++/*
++ * Clean old interfaces no longer found.
++ */
++static void clean_interfaces()
++{
++  struct irec *iface;
++  struct irec **up = &daemon->interfaces;
++
++  for (iface = *up; iface; iface = *up)
++  {
++    if (!iface->found && !iface->done)
++      {
++        *up = iface->next;
++        free(iface->name);
++        free(iface);
++      }
++    else
++      {
++        up = &iface->next;
++      }
++  }
++}
++
++/** Release listener if no other interface needs it.
++ *
++ * @return 1 if released, 0 if still required
++ */
++static int release_listener(struct listener *l)
++{
++  if (l->used > 1)
++    {
++      struct irec *iface;
++      for (iface = daemon->interfaces; iface; iface = iface->next)
++	if (iface->done && sockaddr_isequal(&l->addr, &iface->addr))
++	  {
++	    if (iface->found)
++	      {
++		/* update listener to point to active interface instead */
++		if (!l->iface->found)
++		  l->iface = iface;
++	      }
++	    else
++	      {
++		l->used--;
++		iface->done = 0;
++	      }
++	  }
++
++      /* Someone is still using this listener, skip its deletion */
++      if (l->used > 0)
++	return 0;
++    }
++
++  if (l->iface->done)
++    {
++      int port;
++
++      port = prettyprint_addr(&l->iface->addr, daemon->addrbuff);
++      my_syslog(LOG_DEBUG, _("stopped listening on %s(#%d): %s port %d"),
++		l->iface->name, l->iface->index, daemon->addrbuff, port);
++      /* In case it ever returns */
++      l->iface->done = 0;
++    }
++
++  if (l->fd != -1)
++    close(l->fd);
++  if (l->tcpfd != -1)
++    close(l->tcpfd);
++  if (l->tftpfd != -1)
++    close(l->tftpfd);
++
++  free(l);
++  return 1;
++}
++
+ int enumerate_interfaces(int reset)
+ {
+   static struct addrlist *spare = NULL;
+@@ -652,6 +728,7 @@ int enumerate_interfaces(int reset)
+ 	 in OPT_CLEVERBIND mode, that at listener will just disappear after
+ 	 a call to enumerate_interfaces, this is checked OK on all calls. */
+       struct listener *l, *tmp, **up;
++      int freed = 0;
+       
+       for (up = &daemon->listeners, l = daemon->listeners; l; l = tmp)
+ 	{
+@@ -659,25 +736,17 @@ int enumerate_interfaces(int reset)
+ 	  
+ 	  if (!l->iface || l->iface->found)
+ 	    up = &l->next;
+-	  else
++	  else if (release_listener(l))
+ 	    {
+-	      *up = l->next;
+-	      
+-	      /* In case it ever returns */
+-	      l->iface->done = 0;
+-	      
+-	      if (l->fd != -1)
+-		close(l->fd);
+-	      if (l->tcpfd != -1)
+-		close(l->tcpfd);
+-	      if (l->tftpfd != -1)
+-		close(l->tftpfd);
+-	      
+-	      free(l);
++	      *up = tmp;
++		freed = 1;
+ 	    }
+ 	}
++
++      if (freed)
++	clean_interfaces();
+     }
+-  
++
+   errno = errsave;
+   spare = param.spare;
+     
+@@ -920,10 +989,11 @@ static struct listener *create_listeners(union mysockaddr *addr, int do_tftp, in
+     {
+       l = safe_malloc(sizeof(struct listener));
+       l->next = NULL;
+-      l->family = addr->sa.sa_family;
+       l->fd = fd;
+       l->tcpfd = tcpfd;
+-      l->tftpfd = tftpfd;	
++      l->tftpfd = tftpfd;
++      l->addr = *addr;
++      l->used = 1;
+       l->iface = NULL;
+     }
+ 
+@@ -964,20 +1034,43 @@ void create_wildcard_listeners(void)
+   daemon->listeners = l;
+ }
+ 
++static struct listener *find_listener(union mysockaddr *addr)
++{
++  struct listener *l;
++  for (l = daemon->listeners; l; l = l->next)
++    if (sockaddr_isequal(&l->addr, addr))
++      return l;
++  return NULL;
++}
++
+ void create_bound_listeners(int dienow)
+ {
+   struct listener *new;
+   struct irec *iface;
+   struct iname *if_tmp;
++  struct listener *existing;
+ 
+   for (iface = daemon->interfaces; iface; iface = iface->next)
+-    if (!iface->done && !iface->dad && iface->found &&
+-	(new = create_listeners(&iface->addr, iface->tftp_ok, dienow)))
++    if (!iface->done && !iface->dad && iface->found)
+       {
+-	new->iface = iface;
+-	new->next = daemon->listeners;
+-	daemon->listeners = new;
+-	iface->done = 1;
++	existing = find_listener(&iface->addr);
++	if (existing)
++	  {
++	    iface->done = 1;
++	    existing->used++; /* increase usage counter */
++	  }
++	else if ((new = create_listeners(&iface->addr, iface->tftp_ok, dienow)))
++	  {
++	    int port;
++
++	    new->iface = iface;
++	    new->next = daemon->listeners;
++	    daemon->listeners = new;
++	    iface->done = 1;
++	    port = prettyprint_addr(&iface->addr, daemon->addrbuff);
++	    my_syslog(LOG_DEBUG, _("listening on %s(#%d): %s port %d"),
++		      iface->name, iface->index, daemon->addrbuff, port);
++	  }
+       }
+ 
+   /* Check for --listen-address options that haven't been used because there's
+@@ -995,8 +1088,12 @@ void create_bound_listeners(int dienow)
+     if (!if_tmp->used && 
+ 	(new = create_listeners(&if_tmp->addr, !!option_bool(OPT_TFTP), dienow)))
+       {
++	int port;
++
+ 	new->next = daemon->listeners;
+ 	daemon->listeners = new;
++	port = prettyprint_addr(&if_tmp->addr, daemon->addrbuff);
++	my_syslog(LOG_DEBUG, _("listening on %s port %d"), daemon->addrbuff, port);
+       }
+ }
+ 
+diff --git a/src/tftp.c b/src/tftp.c
+index f2eccbc..9a01dca 100644
+--- a/src/tftp.c
++++ b/src/tftp.c
+@@ -61,8 +61,9 @@ void tftp_request(struct listener *listen, time_t now)
+   struct tftp_prefix *pref;
+   struct all_addr addra;
+ #ifdef HAVE_IPV6
++  int family = listen->addr.sa.sa_family;
+   /* Can always get recvd interface for IPv6 */
+-  int check_dest = !option_bool(OPT_NOWILD) || listen->family == AF_INET6;
++  int check_dest = !option_bool(OPT_NOWILD) || family == AF_INET6;
+ #else
+   int check_dest = !option_bool(OPT_NOWILD);
+ #endif
+@@ -124,10 +125,10 @@ void tftp_request(struct listener *listen, time_t now)
+       if (msg.msg_controllen < sizeof(struct cmsghdr))
+         return;
+       
+-      addr.sa.sa_family = listen->family;
++      addr.sa.sa_family = family;
+       
+ #if defined(HAVE_LINUX_NETWORK)
+-      if (listen->family == AF_INET)
++      if (family == AF_INET)
+ 	for (cmptr = CMSG_FIRSTHDR(&msg); cmptr; cmptr = CMSG_NXTHDR(&msg, cmptr))
+ 	  if (cmptr->cmsg_level == IPPROTO_IP && cmptr->cmsg_type == IP_PKTINFO)
+ 	    {
+@@ -141,7 +142,7 @@ void tftp_request(struct listener *listen, time_t now)
+ 	    }
+       
+ #elif defined(HAVE_SOLARIS_NETWORK)
+-      if (listen->family == AF_INET)
++      if (family == AF_INET)
+ 	for (cmptr = CMSG_FIRSTHDR(&msg); cmptr; cmptr = CMSG_NXTHDR(&msg, cmptr))
+ 	  {
+ 	    union {
+@@ -157,7 +158,7 @@ void tftp_request(struct listener *listen, time_t now)
+ 	  }
+       
+ #elif defined(IP_RECVDSTADDR) && defined(IP_RECVIF)
+-      if (listen->family == AF_INET)
++      if (family == AF_INET)
+ 	for (cmptr = CMSG_FIRSTHDR(&msg); cmptr; cmptr = CMSG_NXTHDR(&msg, cmptr))
+ 	  {
+ 	    union {
+@@ -175,7 +176,7 @@ void tftp_request(struct listener *listen, time_t now)
+ #endif
+ 
+ #ifdef HAVE_IPV6
+-      if (listen->family == AF_INET6)
++      if (family == AF_INET6)
+         {
+           for (cmptr = CMSG_FIRSTHDR(&msg); cmptr; cmptr = CMSG_NXTHDR(&msg, cmptr))
+             if (cmptr->cmsg_level == IPPROTO_IPV6 && cmptr->cmsg_type == daemon->v6pktinfo)
+@@ -200,7 +201,7 @@ void tftp_request(struct listener *listen, time_t now)
+       addra.addr.addr4 = addr.in.sin_addr;
+ 
+ #ifdef HAVE_IPV6
+-      if (listen->family == AF_INET6)
++      if (family == AF_INET6)
+ 	addra.addr.addr6 = addr.in6.sin6_addr;
+ #endif
+ 
+@@ -217,12 +218,12 @@ void tftp_request(struct listener *listen, time_t now)
+       else
+ 	{
+ 	  /* Do the same as DHCP */
+-	  if (!iface_check(listen->family, &addra, name, NULL))
++	  if (!iface_check(family, &addra, name, NULL))
+ 	    {
+ 	      if (!option_bool(OPT_CLEVERBIND))
+ 		enumerate_interfaces(0); 
+-	      if (!loopback_exception(listen->tftpfd, listen->family, &addra, name) &&
+-		  !label_exception(if_index, listen->family, &addra) )
++	      if (!loopback_exception(listen->tftpfd, family, &addra, name) &&
++		  !label_exception(if_index, family, &addra) )
+ 		return;
+ 	    }
+ 	  
+@@ -255,7 +256,7 @@ void tftp_request(struct listener *listen, time_t now)
+ 	  prefix = pref->prefix;  
+     }
+ 
+-  if (listen->family == AF_INET)
++  if (family == AF_INET)
+     {
+       addr.in.sin_port = htons(port);
+ #ifdef HAVE_SOCKADDR_SA_LEN
+@@ -277,7 +278,7 @@ void tftp_request(struct listener *listen, time_t now)
+   if (!(transfer = whine_malloc(sizeof(struct tftp_transfer))))
+     return;
+   
+-  if ((transfer->sockfd = socket(listen->family, SOCK_DGRAM, 0)) == -1)
++  if ((transfer->sockfd = socket(family, SOCK_DGRAM, 0)) == -1)
+     {
+       free(transfer);
+       return;
+@@ -308,7 +309,7 @@ void tftp_request(struct listener *listen, time_t now)
+ 	    {
+ 	      if (++port <= daemon->end_tftp_port)
+ 		{ 
+-		  if (listen->family == AF_INET)
++		  if (family == AF_INET)
+ 		    addr.in.sin_port = htons(port);
+ #ifdef HAVE_IPV6
+ 		  else
+@@ -347,7 +348,7 @@ void tftp_request(struct listener *listen, time_t now)
+ 	      if ((opt = next(&p, end)) && !option_bool(OPT_TFTP_NOBLOCK))
+ 		{
+ 		  /* 32 bytes for IP, UDP and TFTP headers, 52 bytes for IPv6 */
+-		  int overhead = (listen->family == AF_INET) ? 32 : 52;
++		  int overhead = (family == AF_INET) ? 32 : 52;
+ 		  transfer->blocksize = atoi(opt);
+ 		  if (transfer->blocksize < 1)
+ 		    transfer->blocksize = 1;
+-- 
+2.20.1
+
