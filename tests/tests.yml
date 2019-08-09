@@ -1,0 +1,13 @@
+# Tests for NetworkManager
+- hosts: localhost
+  roles:
+  - role: standard-test-basic
+    tags:
+    - classic
+    repositories:
+    - repo: "https://github.com/NetworkManager/NetworkManager-ci"
+      dest: "NetworkManager-ci"
+    tests:
+    - sanity-tests:
+        dir: NetworkManager-ci
+        run: run/osci/run-tests dnsmasq
