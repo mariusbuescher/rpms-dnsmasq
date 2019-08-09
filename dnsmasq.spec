@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.80
-Release:        8%{?extraversion:.%{extraversion}}%{?dist}
+Release:        9%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -32,7 +32,7 @@ Patch6:         dnsmasq-2.80-rh1674067.patch
 Patch7:         dnsmasq-2.80-rh1728701.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1735096
 Patch8:         dnsmasq-2.80-nettle.patch
-Patch9:         dnsmasq-2.80-dhcp-timestamp.patch
+Patch9:         dnsmasq-2.80-SIOCGSTAMP.patch
 
 # This is workaround to nettle bug #1549190
 # https://bugzilla.redhat.com/show_bug.cgi?id=1549190
@@ -165,6 +165,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Aug 09 2019 Petr Menšík <pemensik@redhat.com> - 2.80-9
+- Remove SO_TIMESTAMP support, DHCP was broken (#1739081)
+
 * Wed Jul 31 2019 Petr Menšík <pemensik@redhat.com> - 2.80-8
 - Compile with nettle 3.5
 - Support missing SIOCGSTAMP ioctl
