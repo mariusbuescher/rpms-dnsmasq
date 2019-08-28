@@ -1,0 +1,32 @@
+From 18547163b15bbbcb5ed5113360440387d89d0e15 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20Men=C5=A1=C3=ADk?= <pemensik@redhat.com>
+Date: Wed, 28 Aug 2019 19:28:02 +0200
+Subject: [PATCH] Revert "Do unsolicited RAs for interfaces which appear after
+ dnsmasq startup."
+
+This reverts commit 0a496f059c1e9d75c33cce4c1211d58422ba4f62.
+---
+ src/dhcp6.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/src/dhcp6.c b/src/dhcp6.c
+index 5badc46..454193e 100644
+--- a/src/dhcp6.c
++++ b/src/dhcp6.c
+@@ -679,13 +679,6 @@ static int construct_worker(struct in6_addr *local, int prefix,
+ 	    is_same_net6(local, &template->start6, template->prefix) &&
+ 	    is_same_net6(local, &template->end6, template->prefix))
+ 	  {
+-	    /* First time found, do fast RA. */
+-	    if (template->if_index != if_index || !IN6_ARE_ADDR_EQUAL(&template->local6, local))
+-	      {
+-		ra_start_unsolicited(param->now, template);
+-		param->newone = 1;
+-	      }
+-	    
+ 	    template->if_index = if_index;
+ 	    template->local6 = *local;
+ 	  }
+-- 
+2.20.1
+
