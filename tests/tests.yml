@@ -11,3 +11,5 @@
     - sanity-tests:
         dir: NetworkManager-ci
         run: run/osci/run-tests dnsmasq
+    environment:
+      LC_ALL: C.UTF-8
