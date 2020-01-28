@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.80
-Release:        10%{?extraversion:.%{extraversion}}%{?dist}
+Release:        11%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -167,6 +167,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 2.80-11
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Wed Aug 28 2019 Petr Menšík <pemensik@redhat.com> - 2.80-10
 - Fix CPU intensive RA flood (#1739797)
 
