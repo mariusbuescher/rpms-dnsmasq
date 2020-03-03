@@ -1,4 +1,4 @@
-From 0ef799244732871e043d848f2f845c797f5a0745 Mon Sep 17 00:00:00 2001
+From 684bede049a006a0a47ce88f017ada9f73bf4430 Mon Sep 17 00:00:00 2001
 From: Doran Moppert <dmoppert@redhat.com>
 Date: Tue, 26 Sep 2017 14:48:20 +0930
 Subject: [PATCH] google patch hand-applied
@@ -6,11 +6,11 @@ Subject: [PATCH] google patch hand-applied
 ---
  src/edns0.c   | 10 +++++-----
  src/forward.c |  4 ++++
- src/rfc1035.c |  2 ++
- 3 files changed, 11 insertions(+), 5 deletions(-)
+ src/rfc1035.c |  3 +++
+ 3 files changed, 12 insertions(+), 5 deletions(-)
 
 diff --git a/src/edns0.c b/src/edns0.c
-index af33877..ba6ff0c 100644
+index d75d3cc..7d8cf7f 100644
 --- a/src/edns0.c
 +++ b/src/edns0.c
 @@ -212,11 +212,11 @@ size_t add_pseudoheader(struct dns_header *header, size_t plen, unsigned char *l
@@ -31,10 +31,10 @@ index af33877..ba6ff0c 100644
  	  free(buff);
  	  p += rdlen;
 diff --git a/src/forward.c b/src/forward.c
-index 3dd8633..64af66f 100644
+index ed9c8f6..77059ed 100644
 --- a/src/forward.c
 +++ b/src/forward.c
-@@ -1577,6 +1577,10 @@ void receive_query(struct listener *listen, time_t now)
+@@ -1542,6 +1542,10 @@ void receive_query(struct listener *listen, time_t now)
  	udp_size = PACKETSZ; /* Sanity check - can't reduce below default. RFC 6891 6.2.3 */
      }
  
@@ -46,18 +46,19 @@ index 3dd8633..64af66f 100644
    if (auth_dns)
      {
 diff --git a/src/rfc1035.c b/src/rfc1035.c
-index 6290f22..a943ecb 100644
+index f1edc45..15041cc 100644
 --- a/src/rfc1035.c
 +++ b/src/rfc1035.c
-@@ -1292,6 +1292,8 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
-   int nxdomain = 0, auth = 1, trunc = 0, sec_data = 1;
-   struct mx_srv_record *rec;
+@@ -1326,6 +1326,9 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
    size_t len;
+   int rd_bit = (header->hb3 & HB3_RD);
+ 
 +  // Make sure we do not underflow here too.
 +  if (qlen > (limit - ((char *)header))) return 0;
- 
++
    /* never answer queries with RD unset, to avoid cache snooping. */
-   if (!(header->hb3 & HB3_RD) ||
+   if (ntohs(header->ancount) != 0 ||
+       ntohs(header->nscount) != 0 ||
 -- 
-2.14.4
+2.21.1
 

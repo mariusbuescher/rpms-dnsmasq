@@ -1,5 +1,5 @@
 %define testrelease 0
-%define releasecandidate 0
+%define releasecandidate 3
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test%{testrelease}
@@ -12,13 +12,13 @@
 %define _hardened_build 1
 
 Name:           dnsmasq
-Version:        2.80
-Release:        14%{?extraversion:.%{extraversion}}%{?dist}
+Version:        2.81
+Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
 URL:            http://www.thekelleys.org.uk/dnsmasq/
-Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
+Source0:        %{url}%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
 Source1:        %{name}.service
 Source2:        dnsmasq-systemd-sysusers.conf
 Source3:        %{url}%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz.asc
@@ -32,16 +32,9 @@ Source4:        http://www.thekelleys.org.uk/srkgpg.txt
 # https://bugzilla.redhat.com/show_bug.cgi?id=1495409
 Patch1:         dnsmasq-2.77-underflow.patch
 Patch3:         dnsmasq-2.78-fips.patch
-Patch5:         dnsmasq-2.79-randomize-ports.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1674067
-Patch6:         dnsmasq-2.80-rh1674067.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1728701
 Patch7:         dnsmasq-2.80-rh1728701.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1735096
-Patch8:         dnsmasq-2.80-nettle.patch
 Patch9:         dnsmasq-2.80-SIOCGSTAMP.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1739797
-Patch10:        dnsmasq-2.80-rh1739797.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1810172
 # http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=79aba0f10ad0157fb4f48afbbcb03f094caff97a
 Patch11:        dnsmasq-2.81-prefix-ranges-or-list-of-ipv6-addresses.patch
@@ -189,6 +182,8 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Mar 23 2020 Petr Menšík <pemensik@redhat.com> - 2.81-1.rc3
+- Update to 2.81rc3
 * Mon Mar 23 2020 Petr Menšík <pemensik@redhat.com> - 2.80-14
 - Fix last build breakage of DNS (#1814468)
 
