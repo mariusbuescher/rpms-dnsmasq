@@ -35,14 +35,6 @@ Patch3:         dnsmasq-2.78-fips.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1728701
 Patch7:         dnsmasq-2.80-rh1728701.patch
 Patch9:         dnsmasq-2.80-SIOCGSTAMP.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1810172
-# http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=79aba0f10ad0157fb4f48afbbcb03f094caff97a
-Patch11:        dnsmasq-2.81-prefix-ranges-or-list-of-ipv6-addresses.patch
-# http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=137286e9baecf6a3ba97722ef1b49c851b531810
-Patch12:        dnsmasq-2.81-Extend-79aba0f10ad0157fb4f48afbbcb03f094caff97a.patch
-Patch13:        dnsmasq-2.81-adjust-changes-to-version-2.80.patch
-# http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=52ec7836139e7a11374971905e5ac0d2d02e32c0
-Patch14:        dnsmasq-2.81-tag-filtering-of-dhcp-host-directives.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1647464
 # http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=29ae3083981ea82f535f77ea54bbd538f1224a9e
 Patch15:        dnsmasq-2.81-restore-ability-to-answer-non-recursive-requests.patch
