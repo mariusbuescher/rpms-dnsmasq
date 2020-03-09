@@ -21,6 +21,13 @@ URL:            http://www.thekelleys.org.uk/dnsmasq/
 Source0:        http://www.thekelleys.org.uk/dnsmasq/%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz
 Source1:        %{name}.service
 Source2:        dnsmasq-systemd-sysusers.conf
+Source3:        %{url}%{?extrapath}%{name}-%{version}%{?extraversion}.tar.xz.asc
+# GPG public key
+%if 0%{?testrelease} || 0%{?releasecandidate}
+Source4:        %{url}%{?extrapath}test-release-public-key
+%else
+Source4:        http://www.thekelleys.org.uk/srkgpg.txt
+%endif
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1495409
 Patch1:         dnsmasq-2.77-underflow.patch
@@ -56,6 +63,7 @@ BuildRequires:  pkgconfig
 BuildRequires:  libidn2-devel
 BuildRequires:  nettle-devel
 Buildrequires:  gcc
+BuildRequires:  gnupg2
 
 BuildRequires:  systemd
 %{?systemd_requires}
@@ -79,6 +87,9 @@ server's leases.
 
 
 %prep
+%if 0%{?gpgverify:1}
+%gpgverify -k 4 -s 3 -d 0
+%endif
 %autosetup -p1 -n %{name}-%{version}%{?extraversion}
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
