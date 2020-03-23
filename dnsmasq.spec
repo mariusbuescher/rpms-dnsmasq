@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.80
-Release:        13%{?extraversion:.%{extraversion}}%{?dist}
+Release:        14%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -44,6 +44,7 @@ Patch13:        dnsmasq-2.81-adjust-changes-to-version-2.80.patch
 # http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=52ec7836139e7a11374971905e5ac0d2d02e32c0
 Patch14:        dnsmasq-2.81-tag-filtering-of-dhcp-host-directives.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1647464
+# http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=29ae3083981ea82f535f77ea54bbd538f1224a9e
 Patch15:        dnsmasq-2.81-restore-ability-to-answer-non-recursive-requests.patch
 
 # This is workaround to nettle bug #1549190
@@ -177,6 +178,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Mar 23 2020 Petr Menšík <pemensik@redhat.com> - 2.80-14
+- Fix last build breakage of DNS (#1814468)
+
 * Tue Mar 10 2020 Petr Menšík <pemensik@redhat.com> - 2.80-13
 - Respond to any local name also withou rd bit set (#1647464)
 

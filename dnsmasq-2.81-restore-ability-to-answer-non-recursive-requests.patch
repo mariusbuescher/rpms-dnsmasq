@@ -1,4 +1,4 @@
-From d070ba529bf3be2c6c1e2fe52120820cc83ced68 Mon Sep 17 00:00:00 2001
+From bb7adef44c20e4271b0b8a6e55dac4e986c02fef Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Petr=20Men=C5=A1=C3=ADk?= <pemensik@redhat.com>
 Date: Fri, 12 Apr 2019 15:29:00 +0200
 Subject: [PATCH] Restore ability to answer non-recursive requests
@@ -16,7 +16,7 @@ behaviour.
  1 file changed, 14 insertions(+), 9 deletions(-)
 
 diff --git a/src/rfc1035.c b/src/rfc1035.c
-index a943ecb..efc7009 100644
+index a943ecb..74befef 100644
 --- a/src/rfc1035.c
 +++ b/src/rfc1035.c
 @@ -1273,7 +1273,11 @@ static unsigned long crec_ttl(struct crec *crecp, time_t now)
@@ -44,7 +44,7 @@ index a943ecb..efc7009 100644
    /* never answer queries with RD unset, to avoid cache snooping. */
 -  if (!(header->hb3 & HB3_RD) ||
 -      ntohs(header->ancount) != 0 ||
-+  if (!ntohs(header->ancount) != 0 ||
++  if (ntohs(header->ancount) != 0 ||
        ntohs(header->nscount) != 0 ||
        ntohs(header->qdcount) == 0 || 
        OPCODE(header) != QUERY )
