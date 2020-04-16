@@ -1,5 +1,5 @@
 %define testrelease 0
-%define releasecandidate 3
+%define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test%{testrelease}
@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.81
-Release:        1%{?extraversion:.%{extraversion}}%{?dist}
+Release:        2%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -35,9 +35,6 @@ Patch3:         dnsmasq-2.78-fips.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1728701
 Patch7:         dnsmasq-2.80-rh1728701.patch
 Patch9:         dnsmasq-2.80-SIOCGSTAMP.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1647464
-# http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=29ae3083981ea82f535f77ea54bbd538f1224a9e
-Patch15:        dnsmasq-2.81-restore-ability-to-answer-non-recursive-requests.patch
 
 # This is workaround to nettle bug #1549190
 # https://bugzilla.redhat.com/show_bug.cgi?id=1549190
@@ -174,8 +171,12 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Apr 16 2020 Petr Menšík <pemensik@redhat.com> - 2.81-2
+- Update to 2.81 (#1823139)
+
 * Mon Mar 23 2020 Petr Menšík <pemensik@redhat.com> - 2.81-1.rc3
 - Update to 2.81rc3
+
 * Mon Mar 23 2020 Petr Menšík <pemensik@redhat.com> - 2.80-14
 - Fix last build breakage of DNS (#1814468)
 
