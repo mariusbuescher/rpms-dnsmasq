@@ -13,3 +13,10 @@
         run: run/osci/run-tests dnsmasq
     environment:
       LC_ALL: C.UTF-8
+  - role: standard-test-beakerlib
+    tags:
+    - classic
+    repositories:
+    - repo: "https://github.com/InfrastructureServices/dnsmasq-tests.git"
+      dest: "dnsmasq-tests"
+      fmf_filter: "tier: 1"
