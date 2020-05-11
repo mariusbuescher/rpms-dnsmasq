@@ -13,7 +13,7 @@
 
 Name:           dnsmasq
 Version:        2.81
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Release:        3%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -35,6 +35,8 @@ Patch3:         dnsmasq-2.78-fips.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1728701
 Patch7:         dnsmasq-2.80-rh1728701.patch
 Patch9:         dnsmasq-2.80-SIOCGSTAMP.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1834454
+Patch17:        dnsmasq-2.81-rh1834454.patch
 
 # This is workaround to nettle bug #1549190
 # https://bugzilla.redhat.com/show_bug.cgi?id=1549190
@@ -171,6 +173,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon May 11 2020 Petr Menšík <pemensik@redhat.com> - 2.81-3
+- Correct multiple entries with the same mac address (#1834454)
+
 * Thu Apr 16 2020 Petr Menšík <pemensik@redhat.com> - 2.81-2
 - Update to 2.81 (#1823139)
 
