@@ -10,6 +10,13 @@
 %endif
 
 %define _hardened_build 1
+# path to upstream git repository
+%global git_upstream git://thekelleys.org.uk/dnsmasq.git
+# tag of selected version
+%global gittag v%{version}%{?extraversion}
+
+# Attempt to prepare source-git with downstream repos
+%bcond_with sourcegit
 
 Name:           dnsmasq
 Version:        2.81
@@ -51,6 +58,9 @@ BuildRequires:  gnupg2
 
 BuildRequires:  systemd
 %{?systemd_requires}
+%if %{with sourcegit}
+BuildRequires:  git-core
+%endif
 
 %description
 Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server.
@@ -74,7 +84,22 @@ server's leases.
 %if 0%{?gpgverify:1}
 %gpgverify -k 4 -s 3 -d 0
 %endif
-%autosetup -p1 -n %{name}-%{version}%{?extraversion}
+%if %{with sourcegit}
+%autosetup -n %{name}-%{version}%{?extraversion} -N -S git_am
+# If preparing with sourcegit, drop again source directory
+# and clone git repository
+# FIXME: deleting just unpacked sources is dangerous
+# But using %%setup changes used directories in %%build and %%install
+rm -rf %{_builddir}/%{name}-%{version}%{?extraversion}
+cd %{_builddir}
+git clone -b %{gittag} %{git_upstream} %{name}-%{version}%{?extraversion}
+cd %{name}-%{version}%{?extraversion}
+git checkout -b rpmbuild
+%else
+%autosetup -n %{name}-%{version}%{?extraversion} -N
+%endif
+# Apply patches on top
+%autopatch -p1
 
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
