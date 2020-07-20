@@ -19,8 +19,8 @@
 %bcond_with sourcegit
 
 Name:           dnsmasq
-Version:        2.81
-Release:        4%{?extraversion:.%{extraversion}}%{?dist}
+Version:        2.82
+Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -41,8 +41,6 @@ Patch1:         dnsmasq-2.77-underflow.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1852373
 Patch2:         dnsmasq-2.81-configuration.patch
 Patch3:         dnsmasq-2.78-fips.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1728701
-Patch7:         dnsmasq-2.80-rh1728701.patch
 Patch9:         dnsmasq-2.80-SIOCGSTAMP.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1834454
 Patch17:        dnsmasq-2.81-rh1834454.patch
@@ -186,6 +184,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Mon Jul 20 2020 Petr Menšík <pemensik@redhat.com> - 2.82-1
+- Update to 2.82
+
 * Tue Jun 30 2020 Petr Menšík <pemensik@redhat.com> - 2.81-4
 - Accept queries only from localhost (CVE-2020-14312)
 
