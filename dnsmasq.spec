@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.82
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Release:        3%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -184,6 +184,10 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Sep 30 2020 Petr Menšík <pemensik@redhat.com> - 2.82-3
+- Listen only on localhost interface, return port unreachable on all others
+  (#1852373)
+
 * Mon Jul 27 2020 Fedora Release Engineering <releng@fedoraproject.org> - 2.82-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
