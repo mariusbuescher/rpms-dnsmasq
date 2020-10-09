@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.82
-Release:        3%{?extraversion:.%{extraversion}}%{?dist}
+Release:        4%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -184,6 +184,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Oct 09 2020 Petr Menšík <pemensik@redhat.com> - 2.82-4
+- Remove uninitialized condition from downstream patch
+
 * Wed Sep 30 2020 Petr Menšík <pemensik@redhat.com> - 2.82-3
 - Listen only on localhost interface, return port unreachable on all others
   (#1852373)
