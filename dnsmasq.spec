@@ -81,7 +81,7 @@ server's leases.
 
 
 %prep
-%if 0%{?gpgverify:1}
+%if 0%{?fedora}
 %gpgverify -k 4 -s 3 -d 0
 %endif
 %if %{with sourcegit}
