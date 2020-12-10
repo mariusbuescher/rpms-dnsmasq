@@ -57,6 +57,7 @@ Buildrequires:  gcc
 BuildRequires:  gnupg2
 
 BuildRequires:  systemd
+BuildRequires:  systemd-rpm-macros
 %{?systemd_requires}
 %if %{with sourcegit}
 BuildRequires:  git-core
@@ -152,7 +153,7 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 
 %pre
 #precreate users so that rpm can install files owned by that user
-%sysusers_create_package %{name} %{SOURCE2}
+%sysusers_create_compat %{SOURCE2}
 
 %post
 %systemd_post dnsmasq.service
