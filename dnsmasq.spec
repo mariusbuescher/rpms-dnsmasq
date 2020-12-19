@@ -61,6 +61,7 @@ BuildRequires:  systemd
 %if %{with sourcegit}
 BuildRequires:  git-core
 %endif
+BuildRequires: make
 
 %description
 Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server.
