@@ -19,8 +19,8 @@
 %bcond_with sourcegit
 
 Name:           dnsmasq
-Version:        2.82
-Release:        4%{?extraversion:.%{extraversion}}%{?dist}
+Version:        2.83
+Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -186,6 +186,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Tue Jan 19 2021 Petr Menšík <pemensik@redhat.com> - 2.83-1
+- Update to 2.83, fix CVE-2020-25681-7
+
 * Fri Oct 09 2020 Petr Menšík <pemensik@redhat.com> - 2.82-4
 - Remove uninitialized condition from downstream patch
 
