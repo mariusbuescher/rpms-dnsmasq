@@ -183,6 +183,7 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %changelog
 * Wed Mar 31 2021 Petr Menšík <pemensik@redhat.com> - 2.85-1.rc2
 - Update to 2.85rc2 (CVE-2021-3448)
+- Switch systemd unit to forking, reports error on startup (#1774028)
 
 * Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 2.84-2
 - Rebuilt for updated systemd-rpm-macros
