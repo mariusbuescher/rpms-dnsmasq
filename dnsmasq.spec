@@ -1,5 +1,5 @@
 %define testrelease 0
-%define releasecandidate 0
+%define releasecandidate 2
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test%{testrelease}
@@ -19,8 +19,8 @@
 %bcond_with sourcegit
 
 Name:           dnsmasq
-Version:        2.84
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Version:        2.85
+Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -41,13 +41,8 @@ Patch1:         dnsmasq-2.77-underflow.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1852373
 Patch2:         dnsmasq-2.81-configuration.patch
 Patch3:         dnsmasq-2.78-fips.patch
-Patch9:         dnsmasq-2.80-SIOCGSTAMP.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1834454
-Patch17:        dnsmasq-2.81-rh1834454.patch
 
-# This is workaround to nettle bug #1549190
-# https://bugzilla.redhat.com/show_bug.cgi?id=1549190
-Requires:       nettle >= 3.4
+Requires:       nettle
 
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
@@ -186,6 +181,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Mar 31 2021 Petr Menšík <pemensik@redhat.com> - 2.85-1.rc2
+- Update to 2.85rc2 (CVE-2021-3448)
+
 * Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 2.84-2
 - Rebuilt for updated systemd-rpm-macros
   See https://pagure.io/fesco/issue/2583.
