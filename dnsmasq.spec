@@ -1,5 +1,5 @@
 %define testrelease 0
-%define releasecandidate 2
+%define releasecandidate 0
 %if 0%{testrelease}
   %define extrapath test-releases/
   %define extraversion test%{testrelease}
@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.85
-Release:        1%{?extraversion:.%{extraversion}}%{?dist}
+Release:        2%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -181,6 +181,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Apr 08 2021 Petr Menšík <pemensik@redhat.com> - 2.85-2
+- Update to 2.85 (#1947198)
+
 * Wed Mar 31 2021 Petr Menšík <pemensik@redhat.com> - 2.85-1.rc2
 - Update to 2.85rc2 (CVE-2021-3448)
 - Switch systemd unit to forking, reports error on startup (#1774028)
