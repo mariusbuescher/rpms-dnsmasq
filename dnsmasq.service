@@ -3,7 +3,7 @@ Description=DNS caching server.
 After=network.target
 
 [Service]
-ExecStart=/usr/sbin/dnsmasq --pid-file=/run/dnsmasq.pid
+ExecStart=/usr/sbin/dnsmasq
 Type=forking
 PIDFile=/run/dnsmasq.pid
 

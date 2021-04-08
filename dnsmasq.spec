@@ -106,6 +106,7 @@ done
 #set default user /group in src/config.h
 sed -i 's|#define CHUSER "nobody"|#define CHUSER "dnsmasq"|' src/config.h
 sed -i 's|#define CHGRP "dip"|#define CHGRP "dnsmasq"|' src/config.h
+sed -i "s|\(#\s*define RUNFILE\) \"/var/run/dnsmasq.pid\"|\1 \"%{_rundir}/dnsmasq.pid\"|" src/config.h
 
 # optional parts
 sed -i 's|^COPTS[[:space:]]*=|\0 -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_DNSSEC|' Makefile
