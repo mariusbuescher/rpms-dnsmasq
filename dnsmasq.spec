@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.85
-Release:        3%{?extraversion:.%{extraversion}}%{?dist}
+Release:        4%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -41,6 +41,8 @@ Patch1:         dnsmasq-2.77-underflow.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1852373
 Patch2:         dnsmasq-2.81-configuration.patch
 Patch3:         dnsmasq-2.78-fips.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1978718
+Patch4:         dnsmasq-2.85-lease-hostname.patch
 
 Requires:       nettle
 
@@ -182,6 +184,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Jul 22 2021 Petr Menšík <pemensik@redhat.com> - 2.85-4
+- Update lease if hostname is assigned to a new lease (#1978718)
+
 * Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 2.85-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
