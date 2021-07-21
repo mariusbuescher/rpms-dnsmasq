@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.85
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Release:        3%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -182,6 +182,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 2.85-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Thu Apr 08 2021 Petr Menšík <pemensik@redhat.com> - 2.85-2
 - Update to 2.85 (#1947198)
 
