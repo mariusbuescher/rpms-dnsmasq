@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.85
-Release:        5%{?extraversion:.%{extraversion}}%{?dist}
+Release:        6%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -55,7 +55,7 @@ BuildRequires:  gnupg2
 
 BuildRequires:  systemd
 BuildRequires:  systemd-rpm-macros
-%{?systemd_requires}
+%{?systemd_ordering}
 %if %{with sourcegit}
 BuildRequires:  git-core
 %endif
@@ -184,6 +184,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Aug 04 2021 Petr Menšík <pemensik@redhat.com> - 2.85-6
+- Do not require systemd
+
 * Thu Jul 22 2021 Petr Menšík <pemensik@redhat.com> - 2.85-5
 - Start before nss-lookup.target, hint modification to listen on IP (#1984618)
 
