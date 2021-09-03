@@ -41,8 +41,24 @@ Patch1:         dnsmasq-2.77-underflow.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1852373
 Patch2:         dnsmasq-2.81-configuration.patch
 Patch3:         dnsmasq-2.78-fips.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1978718
-Patch4:         dnsmasq-2.85-lease-hostname.patch
+
+Patch10:         0001-Retry-on-interrupted-error-in-tftp.patch
+Patch11:         0002-Add-safety-checks-to-places-pointed-by-Coverity.patch
+Patch12:         0003-Small-safeguard-to-unexpected-data.patch
+Patch13:         0004-Fix-bunch-of-warnings-in-auth.c.patch
+Patch14:         0005-Fix-few-coverity-warnings-in-lease-tools.patch
+Patch15:         0006-Fix-coverity-formats-issues-in-blockdata.patch
+Patch16:         0007-Retry-dhcp6-ping-on-interrupts.patch
+Patch17:         0008-Fix-coverity-warnings-on-dbus.patch
+Patch18:         0009-Address-coverity-issues-detected-in-util.c.patch
+Patch19:         0010-Fix-coverity-detected-issues-in-option.c.patch
+Patch20:         0011-Fix-coverity-detected-issue-in-radv.c.patch
+Patch21:         0012-Fix-coverity-detected-issues-in-cache.c.patch
+Patch22:         0013-Fix-coverity-issues-detected-in-domain-match.c.patch
+Patch23:         0014-Fix-coverity-detected-issues-in-dnsmasq.c.patch
+Patch24:         0015-Fix-coverity-issues-in-dnssec.c.patch
+
+
 
 Requires:       nettle
 

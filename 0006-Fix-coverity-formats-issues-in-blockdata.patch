@@ -1,0 +1,48 @@
+From 3a077065ce846e301b532127ebecdd2771ad75ed Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20Men=C5=A1=C3=ADk?= <pemensik@redhat.com>
+Date: Fri, 3 Sep 2021 16:41:00 +0200
+Subject: [PATCH 06/15] Fix coverity formats issues in blockdata
+
+Error: PRINTF_ARGS (CWE-686): [#def16]
+dnsmasq-2.86test7/src/blockdata.c:56: invalid_type: Argument "blockdata_count * 48UL" to format specifier "%u" was expected to have type "unsigned int" but has type "unsigned long".
+ #   54|   {
+ #   55|     my_syslog(LOG_INFO, _("pool memory in use %u, max %u, allocated %u"),
+ #   56|-> 	    blockdata_count * sizeof(struct blockdata),
+ #   57|   	    blockdata_hwm * sizeof(struct blockdata),
+ #   58|   	    blockdata_alloced * sizeof(struct blockdata));
+
+Error: PRINTF_ARGS (CWE-686): [#def17]
+dnsmasq-2.86test7/src/blockdata.c:57: invalid_type: Argument "blockdata_hwm * 48UL" to format specifier "%u" was expected to have type "unsigned int" but has type "unsigned long".
+ #   55|     my_syslog(LOG_INFO, _("pool memory in use %u, max %u, allocated %u"),
+ #   56|   	    blockdata_count * sizeof(struct blockdata),
+ #   57|-> 	    blockdata_hwm * sizeof(struct blockdata),
+ #   58|   	    blockdata_alloced * sizeof(struct blockdata));
+ #   59|   }
+
+Error: PRINTF_ARGS (CWE-686): [#def18]
+dnsmasq-2.86test7/src/blockdata.c:58: invalid_type: Argument "blockdata_alloced * 48UL" to format specifier "%u" was expected to have type "unsigned int" but has type "unsigned long".
+ #   56|   	    blockdata_count * sizeof(struct blockdata),
+ #   57|   	    blockdata_hwm * sizeof(struct blockdata),
+ #   58|-> 	    blockdata_alloced * sizeof(struct blockdata));
+ #   59|   }
+ #   60|
+---
+ src/blockdata.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/blockdata.c b/src/blockdata.c
+index f7740b5..0986285 100644
+--- a/src/blockdata.c
++++ b/src/blockdata.c
+@@ -52,7 +52,7 @@ void blockdata_init(void)
+ 
+ void blockdata_report(void)
+ {
+-  my_syslog(LOG_INFO, _("pool memory in use %u, max %u, allocated %u"), 
++  my_syslog(LOG_INFO, _("pool memory in use %zu, max %zu, allocated %zu"), 
+ 	    blockdata_count * sizeof(struct blockdata),  
+ 	    blockdata_hwm * sizeof(struct blockdata),  
+ 	    blockdata_alloced * sizeof(struct blockdata));
+-- 
+2.31.1
+
