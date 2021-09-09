@@ -1,4 +1,4 @@
-From 684bede049a006a0a47ce88f017ada9f73bf4430 Mon Sep 17 00:00:00 2001
+From 77c7cabbeab1fbe1f7296f33762771f208586e59 Mon Sep 17 00:00:00 2001
 From: Doran Moppert <dmoppert@redhat.com>
 Date: Tue, 26 Sep 2017 14:48:20 +0930
 Subject: [PATCH] google patch hand-applied
@@ -10,7 +10,7 @@ Subject: [PATCH] google patch hand-applied
  3 files changed, 12 insertions(+), 5 deletions(-)
 
 diff --git a/src/edns0.c b/src/edns0.c
-index d75d3cc..7d8cf7f 100644
+index 7bd26b8..7f96414 100644
 --- a/src/edns0.c
 +++ b/src/edns0.c
 @@ -212,11 +212,11 @@ size_t add_pseudoheader(struct dns_header *header, size_t plen, unsigned char *l
@@ -31,10 +31,10 @@ index d75d3cc..7d8cf7f 100644
  	  free(buff);
  	  p += rdlen;
 diff --git a/src/forward.c b/src/forward.c
-index ed9c8f6..77059ed 100644
+index 3d638e4..e254e35 100644
 --- a/src/forward.c
 +++ b/src/forward.c
-@@ -1542,6 +1542,10 @@ void receive_query(struct listener *listen, time_t now)
+@@ -1558,6 +1558,10 @@ void receive_query(struct listener *listen, time_t now)
  	udp_size = PACKETSZ; /* Sanity check - can't reduce below default. RFC 6891 6.2.3 */
      }
  
@@ -42,14 +42,14 @@ index ed9c8f6..77059ed 100644
 +  // do not underflow
 +  if (udp_size < n) udp_size = n;
 +
+ #ifdef HAVE_CONNTRACK
  #ifdef HAVE_AUTH
-   if (auth_dns)
-     {
+   if (!auth_dns || local_auth)
 diff --git a/src/rfc1035.c b/src/rfc1035.c
-index f1edc45..15041cc 100644
+index 6fc4f26..66fa00c 100644
 --- a/src/rfc1035.c
 +++ b/src/rfc1035.c
-@@ -1326,6 +1326,9 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
+@@ -1396,6 +1396,9 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
    size_t len;
    int rd_bit = (header->hb3 & HB3_RD);
  
@@ -60,5 +60,5 @@ index f1edc45..15041cc 100644
    if (ntohs(header->ancount) != 0 ||
        ntohs(header->nscount) != 0 ||
 -- 
-2.21.1
+2.31.1
 

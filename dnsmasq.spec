@@ -19,8 +19,8 @@
 %bcond_with sourcegit
 
 Name:           dnsmasq
-Version:        2.85
-Release:        6%{?extraversion:.%{extraversion}}%{?dist}
+Version:        2.86
+Release:        1%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -200,6 +200,10 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Sep 09 2021 Petr Menšík <pemensik@redhat.com> - 2.86-1
+- Update to 2.86 (#2002475)
+- Apply coverity detected issues patches
+
 * Wed Aug 04 2021 Petr Menšík <pemensik@redhat.com> - 2.85-6
 - Do not require systemd
 
