@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.86
-Release:        1%{?extraversion:.%{extraversion}}%{?dist}
+Release:        2%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -57,6 +57,8 @@ Patch21:         0012-Fix-coverity-detected-issues-in-cache.c.patch
 Patch22:         0013-Fix-coverity-issues-detected-in-domain-match.c.patch
 Patch23:         0014-Fix-coverity-detected-issues-in-dnsmasq.c.patch
 Patch24:         0015-Fix-coverity-issues-in-dnssec.c.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2006367
+Patch25:         dnsmasq-2.86-domain-match-local.patch
 
 
 
@@ -200,6 +202,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Sep 23 2021 Petr Menšík <pemensik@redhat.com> - 2.86-2
+- Attempt to fix regression found on recent release (#2006367)
+
 * Thu Sep 09 2021 Petr Menšík <pemensik@redhat.com> - 2.86-1
 - Update to 2.86 (#2002475)
 - Apply coverity detected issues patches
