@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.86
-Release:        2%{?extraversion:.%{extraversion}}%{?dist}
+Release:        3%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -59,6 +59,9 @@ Patch23:         0014-Fix-coverity-detected-issues-in-dnsmasq.c.patch
 Patch24:         0015-Fix-coverity-issues-in-dnssec.c.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2006367
 Patch25:         dnsmasq-2.86-domain-match-local.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2009975
+# replaces/enhances http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=d290630d31f4517ab26392d00753d1397f9a4114
+Patch26:         dnsmasq-2.86-build_server_array.patch
 
 
 
@@ -202,6 +205,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Thu Oct 14 2021 Petr Menšík <pemensik@redhat.com> - 2.86-3
+- Rebuild server_array on any server change (#2009975)
+
 * Thu Sep 23 2021 Petr Menšík <pemensik@redhat.com> - 2.86-2
 - Attempt to fix regression found on recent release (#2006367)
 
