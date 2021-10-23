@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.86
-Release:        7%{?extraversion:.%{extraversion}}%{?dist}
+Release:        8%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -80,6 +80,7 @@ Requires:       nettle
 BuildRequires:  dbus-devel
 BuildRequires:  pkgconfig
 BuildRequires:  libidn2-devel
+BuildRequires:  pkgconfig(libnetfilter_conntrack)
 BuildRequires:  nettle-devel
 Buildrequires:  gcc
 BuildRequires:  gnupg2
@@ -144,7 +145,7 @@ sed -i 's|#define CHGRP "dip"|#define CHGRP "dnsmasq"|' src/config.h
 sed -i "s|\(#\s*define RUNFILE\) \"/var/run/dnsmasq.pid\"|\1 \"%{_rundir}/dnsmasq.pid\"|" src/config.h
 
 # optional parts
-sed -i 's|^COPTS[[:space:]]*=|\0 -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_DNSSEC|' Makefile
+sed -i 's|^COPTS[[:space:]]*=|\0 -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_DNSSEC -DHAVE_CONNTRACK|' Makefile
 
 %build
 %make_build CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
@@ -217,6 +218,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Apr 29 2022 Anssi Hannula <anssi.hannula@iki.fi> - 2.86-8
+- Enable conntrack support
+
 * Fri Apr 29 2022 Petr Menšík <pemensik@redhat.com> - 2.86-7
 - Correct GNU address in license file
 
