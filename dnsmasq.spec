@@ -62,6 +62,8 @@ Patch25:         dnsmasq-2.86-domain-match-local.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2009975
 # replaces/enhances http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=d290630d31f4517ab26392d00753d1397f9a4114
 Patch26:         dnsmasq-2.86-build_server_array.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2014019
+Patch28:         dnsmasq-2.87-tcp-strcasecmp.patch
 
 
 
@@ -207,6 +209,7 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %changelog
 * Thu Oct 14 2021 Petr Menšík <pemensik@redhat.com> - 2.86-3
 - Rebuild server_array on any server change (#2009975)
+- Compare case-insensitive also TCP queries (#2014019)
 
 * Thu Sep 23 2021 Petr Menšík <pemensik@redhat.com> - 2.86-2
 - Attempt to fix regression found on recent release (#2006367)
