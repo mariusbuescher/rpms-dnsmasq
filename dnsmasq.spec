@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.86
-Release:        3%{?extraversion:.%{extraversion}}%{?dist}
+Release:        4%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -64,6 +64,9 @@ Patch25:         dnsmasq-2.86-domain-match-local.patch
 Patch26:         dnsmasq-2.86-build_server_array.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2014019
 Patch28:         dnsmasq-2.87-tcp-strcasecmp.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2024166
+# http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=1f8f78a49b8fd6b2862a3882053b1c6e6e111e5c
+Patch29:         dnsmasq-2.87-root-log-writeable.patch
 
 
 
@@ -207,6 +210,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Sun Jan 16 2022 Petr Menšík <pemensik@redhat.com> - 2.86-4
+- Add writeable group flag to log file (#2024166)
+
 * Thu Oct 14 2021 Petr Menšík <pemensik@redhat.com> - 2.86-3
 - Rebuild server_array on any server change (#2009975)
 - Compare case-insensitive also TCP queries (#2014019)
