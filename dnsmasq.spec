@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.86
-Release:        5%{?extraversion:.%{extraversion}}%{?dist}
+Release:        6%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -67,6 +67,9 @@ Patch28:         dnsmasq-2.87-tcp-strcasecmp.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=2024166
 # http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=1f8f78a49b8fd6b2862a3882053b1c6e6e111e5c
 Patch29:         dnsmasq-2.87-root-log-writeable.patch
+# https://lists.thekelleys.org.uk/pipermail/dnsmasq-discuss/2022q1/016166.html
+# https://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=553c4c99cca173e9964d0edbd0676ed96c30f62b
+Patch30:         https://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=patch;h=553c4c99cca173e9964d0edbd0676ed96c30f62b#/dnsmasq-2.87-resolv.conf-reread.patch
 
 
 
@@ -210,6 +213,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Wed Feb 23 2022 Petr Menšík <pemensik@redhat.com> - 2.86-6
+- Fix errors on server reload
+
 * Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 2.86-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
