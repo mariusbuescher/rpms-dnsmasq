@@ -97,7 +97,7 @@ It can serve the names of local machines which are not in the global
 DNS. The DHCP server integrates with the DNS server and allows machines
 with DHCP-allocated addresses to appear in the DNS with names configured
 either in each host or in a central configuration file. Dnsmasq supports
-static and dynamic DHCP leases and BOOTP for network booting of diskless
+static and dynamic DHCP leases and BOOTP for network booting of disk-less
 machines.
 
 %package        utils
