@@ -1,28 +1,10 @@
 ---
 badfuncs:
-    # Shared function names prohibited from executables and libraries.
-    # The function names listed here are generally ones provided by
-    # the system, but are deprecated in favor of more modern
-    # alternatives.  As a rule we do not want to make use of those but
-    # only provide them to users for backwards compatibility.
-
-    # This is an array of forbidden function names.
-    - gethostbyname
-    - gethostbyname2
-    - gethostbyaddr
-    - inet_aton
-    - inet_nsap_addr
-    - inet_nsap_ntoa
-    - inet_makeaddr
-    - inet_netof
-    - inet_network
-    - inet_neta
-    - inet_net_ntop
-    - inet_net_pton
-    - rcmd
-    - rexec
-    - rresvport
     # Those functions are used in IPv4-only handling functions in dnsmasq.
     # It handles also IPv6, but in different code paths with different calls.
     #- inet_addr
     #- inet_ntoa
+    ignore:
+      - /usr/sbin/dnsmasq
+      - /usr/bin/dhcp_lease_time
+      - /usr/bin/dhcp_release
