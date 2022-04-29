@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.86
-Release:        6%{?extraversion:.%{extraversion}}%{?dist}
+Release:        7%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -35,6 +35,8 @@ Source4:        %{url}%{?extrapath}test-release-public-key
 %else
 Source4:        http://www.thekelleys.org.uk/srkgpg.txt
 %endif
+# https://lists.thekelleys.org.uk/pipermail/dnsmasq-discuss/2022q2/016325.html
+Source5:        https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1495409
 Patch1:         dnsmasq-2.77-underflow.patch
@@ -129,6 +131,8 @@ git checkout -b rpmbuild
 # Apply patches on top
 %autopatch -p1
 
+cp -p %{SOURCE5} COPYING
+
 # use /var/lib/dnsmasq instead of /var/lib/misc
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
     sed -i 's|/var/lib/misc/dnsmasq.leases|/var/lib/dnsmasq/dnsmasq.leases|g' "$file"
@@ -213,6 +217,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Apr 29 2022 Petr Menšík <pemensik@redhat.com> - 2.86-7
+- Correct GNU address in license file
+
 * Wed Feb 23 2022 Petr Menšík <pemensik@redhat.com> - 2.86-6
 - Fix errors on server reload
 
