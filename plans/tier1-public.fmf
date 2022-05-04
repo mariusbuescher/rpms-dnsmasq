@@ -1,17 +1,8 @@
-summary: Combine all availabe tests for dnsmasq
+summary: Combine all availabe beakerlib tests for dnsmasq
 discover:
   - name: fedora_tests_dnsmasq
     how: fmf
     url: https://src.fedoraproject.org/tests/dnsmasq.git
     filter: 'tier: 1'
-  - name: github_NetworkManager
-    prepare:
-      how: install
-      packages: git
-    execute:
-      script: |
-        git clone https://github.com/NetworkManager/NetworkManager-ci
-        cd NetworkManager-ci
-        ./run/osci/run-tests dnsmasq
 execute:
     how: tmt
