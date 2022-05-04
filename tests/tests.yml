@@ -17,6 +17,6 @@
     tags:
     - classic
     repositories:
-    - repo: "https://github.com/InfrastructureServices/dnsmasq-tests.git"
+    - repo: "https://src.fedoraproject.org/tests/dnsmasq.git"
       dest: "dnsmasq-tests"
       fmf_filter: "tier: 1"
