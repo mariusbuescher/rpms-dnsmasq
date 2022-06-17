@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.86
-Release:        8%{?extraversion:.%{extraversion}}%{?dist}
+Release:        9%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -72,6 +72,8 @@ Patch29:         dnsmasq-2.87-root-log-writeable.patch
 # https://lists.thekelleys.org.uk/pipermail/dnsmasq-discuss/2022q1/016166.html
 # https://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=commit;h=553c4c99cca173e9964d0edbd0676ed96c30f62b
 Patch30:         https://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=patch;h=553c4c99cca173e9964d0edbd0676ed96c30f62b#/dnsmasq-2.87-resolv.conf-reread.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2061944
+Patch31:         dnsmasq-2.87-reuse-server.patch
 
 
 
@@ -218,6 +220,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Jun 17 2022 Petr Menšík <pemensik@redhat.com> - 2.86-9
+- Do not drop static forwarders on DBus reconfiguration (#2061944)
+
 * Fri Apr 29 2022 Anssi Hannula <anssi.hannula@iki.fi> - 2.86-8
 - Enable conntrack support
 
