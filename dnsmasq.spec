@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.86
-Release:        9%{?extraversion:.%{extraversion}}%{?dist}
+Release:        10%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPLv2 or GPLv3
@@ -201,11 +201,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %files
 %doc CHANGELOG FAQ doc.html setup.html dbus/DBus-interface
 %license COPYING COPYING-v3
-%defattr(0644,root,dnsmasq,0755)
 %config(noreplace) %{_sysconfdir}/dnsmasq.conf
 %dir %{_sysconfdir}/dnsmasq.d
-%dir %{_var}/lib/dnsmasq
-%defattr(-,root,root,-)
+%dir %attr(0755,root,dnsmasq) %{_var}/lib/dnsmasq
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/dnsmasq.conf
 %{_unitdir}/%{name}.service
 %{_sbindir}/dnsmasq
@@ -220,6 +218,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Jul 08 2022 Petr Menšík <pemensik@redhat.com> - 2.86-10
+- Do not own configuration by dnsmasq group (#2104973)
+
 * Fri Jun 17 2022 Petr Menšík <pemensik@redhat.com> - 2.86-9
 - Do not drop static forwarders on DBus reconfiguration (#2061944)
 
