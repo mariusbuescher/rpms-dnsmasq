@@ -20,7 +20,7 @@
 
 Name:           dnsmasq
 Version:        2.88
-Release:        1%{?extraversion:.%{extraversion}}%{?dist}
+Release:        2%{?extraversion:.%{extraversion}}%{?dist}
 Summary:        A lightweight DHCP/caching DNS server
 
 License:        GPL-2.0-only or GPL-3.0-only
@@ -42,6 +42,7 @@ Patch1:         dnsmasq-2.77-underflow.patch
 Patch2:         dnsmasq-2.81-configuration.patch
 Patch3:         dnsmasq-2.78-fips.patch
 
+Patch4:         0016-DHCPv6-Honor-assigning-IPv6-address-based-on-MAC-add.patch
 
 Requires:       nettle
 
@@ -182,6 +183,9 @@ install -Dpm 644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 %{_mandir}/man1/dhcp_*
 
 %changelog
+* Fri Feb 11 2022 Ben Kircher <bkircher@0xadd.de> - 2.88-2
+- Add 'DHCPv6 assignment based on MAC address' patch
+
 * Tue Dec 06 2022 Petr Menšík <pemensik@redhat.com> - 2.88-1
 - Update to 2.88 (#2150667)
 
