@@ -1,4 +1,4 @@
-From 46b9670a418419d9e04bbe9a0d6c5a85f3c63265 Mon Sep 17 00:00:00 2001
+From 0e581ae7b2d3b181f22f71d5a0b7ace0bf90089f Mon Sep 17 00:00:00 2001
 From: Doran Moppert <dmoppert@redhat.com>
 Date: Tue, 26 Sep 2017 14:48:20 +0930
 Subject: [PATCH] google patch hand-applied
@@ -30,19 +30,19 @@ index c498eb1..0eb3873 100644
  	  free(buff);
  	  p += rdlen;
 diff --git a/src/rfc1035.c b/src/rfc1035.c
-index 60ef272..93701f6 100644
+index 5c0df56..7e01459 100644
 --- a/src/rfc1035.c
 +++ b/src/rfc1035.c
-@@ -1411,6 +1411,9 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
+@@ -1425,6 +1425,9 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
    size_t len;
    int rd_bit = (header->hb3 & HB3_RD);
  
 +  // Make sure we do not underflow here too.
 +  if (qlen > (limit - ((char *)header))) return 0;
 +
-   /* never answer queries with RD unset, to avoid cache snooping. */
-   if (ntohs(header->ancount) != 0 ||
-       ntohs(header->nscount) != 0 ||
+   if (stale)
+     *stale = 0;
+   
 -- 
-2.37.3
+2.38.1
 
